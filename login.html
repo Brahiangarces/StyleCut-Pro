@@ -354,6 +354,22 @@
                 });
             }
         });
+
+        // Depuración: Verificar usuarios cargados
+        setTimeout(() => {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            console.log('Usuarios cargados:', users);
+            console.log('Intentando login con admin1@stylecut.com / admin123');
+            
+            // Forzar inicialización si no hay usuarios
+            if (users.length === 0) {
+                console.log('No hay usuarios, forzando inicialización...');
+                if (typeof authSystem !== 'undefined') {
+                    authSystem.initStorage();
+                    console.log('Auth-system re-inicializado');
+                }
+            }
+        }, 1000);
     </script>
 </body>
 </html>
