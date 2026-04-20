@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleCut Pro - Acceso Directo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-spa text-3xl text-purple-600"></i>
+                    <span class="text-2xl font-bold text-gray-800">StyleCut Pro</span>
+                </div>
+                <div class="text-sm text-gray-600">
+                    Sistema de Reservas para Barberías
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4">
+                Acceso Directo al Sistema
+            </h1>
+            <p class="text-xl text-purple-100">
+                Selecciona tu rol para acceder al panel correspondiente
+            </p>
+        </div>
+
+        <!-- Access Cards -->
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <!-- Admin Card -->
+            <div class="bg-white rounded-xl shadow-xl p-8 card-hover">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-shield text-3xl text-red-600"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Administrador</h2>
+                    <p class="text-gray-600 mb-6">
+                        Gestión completa del sistema
+                    </p>
+                    <button onclick="accessAdmin()" 
+                        class="w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition font-medium">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Acceder como Admin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Barber Card -->
+            <div class="bg-white rounded-xl shadow-xl p-8 card-hover">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cut text-3xl text-blue-600"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Barbero</h2>
+                    <p class="text-gray-600 mb-6">
+                        Gestión de citas y servicios
+                    </p>
+                    <button onclick="accessBarber()" 
+                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition font-medium">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Acceder como Barbero
+                    </button>
+                </div>
+            </div>
+
+            <!-- Client Card -->
+            <div class="bg-white rounded-xl shadow-xl p-8 card-hover">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user text-3xl text-green-600"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Cliente</h2>
+                    <p class="text-gray-600 mb-6">
+                        Reservar citas y ver servicios
+                    </p>
+                    <button onclick="accessClient()" 
+                        class="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition font-medium">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Acceder como Cliente
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Options -->
+        <div class="mt-12 text-center">
+            <div class="bg-white bg-opacity-90 rounded-lg p-6 max-w-2xl mx-auto">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Otras Opciones</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <a href="barber-directory.html" 
+                        class="bg-purple-100 text-purple-700 py-3 px-6 rounded-lg hover:bg-purple-200 transition inline-block text-center">
+                        <i class="fas fa-search mr-2"></i>
+                        Directorio de Barberos
+                    </a>
+                    <a href="barber-registration.html" 
+                        class="bg-purple-100 text-purple-700 py-3 px-6 rounded-lg hover:bg-purple-200 transition inline-block text-center">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        Registrarse como Barbero
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-300">
+                StyleCut Pro - Sistema de Reservas para Barberías
+            </p>
+            <p class="text-gray-400 text-sm mt-2">
+                Acceso directo sin necesidad de login
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function setupSession(role, userData) {
+            // Configurar sesión directa
+            const sessionData = {
+                id: userData.id || role + '_demo',
+                name: userData.name || 'Usuario Demo',
+                email: userData.email || role + '@demo.com',
+                role: role,
+                status: 'active',
+                createdAt: new Date().toISOString()
+            };
+
+            // Guardar en sessionStorage
+            sessionStorage.setItem('currentUser', JSON.stringify(sessionData));
+            sessionStorage.setItem('userRole', role);
+            sessionStorage.setItem('userEmail', sessionData.email);
+            sessionStorage.setItem('userData', JSON.stringify(sessionData));
+
+            // Guardar en localStorage
+            localStorage.setItem('authToken', btoa(JSON.stringify({
+                id: sessionData.id,
+                email: sessionData.email,
+                role: role,
+                exp: Date.now() + (24 * 60 * 60 * 1000)
+            })));
+
+            console.log('Sesión configurada para:', role, sessionData);
+        }
+
+        function accessAdmin() {
+            const adminData = {
+                id: 'admin1',
+                name: 'Admin User',
+                email: 'admin1@stylecut.com'
+            };
+            
+            setupSession('admin', adminData);
+            window.location.href = 'admin-dashboard.html';
+        }
+
+        function accessBarber() {
+            const barberData = {
+                id: 'barber1',
+                name: 'Carlos Rodríguez',
+                email: 'carlos@stylecut.com'
+            };
+            
+            setupSession('barber', barberData);
+            window.location.href = 'barber-dashboard.html';
+        }
+
+        function accessClient() {
+            const clientData = {
+                id: 'client1',
+                name: 'Juan Pérez',
+                email: 'juan.perez@email.com'
+            };
+            
+            setupSession('client', clientData);
+            window.location.href = 'client-portal.html';
+        }
+    </script>
+</body>
+</html>
