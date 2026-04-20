@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleCut Pro - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <div class="glass-effect rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <i class="fas fa-spa text-4xl text-purple-600"></i>
+                <span class="text-3xl font-bold text-gray-800">StyleCut Pro</span>
+            </div>
+            <p class="text-gray-600">Sistema de Reservas para Barberías</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-envelope mr-2"></i>Email
+                </label>
+                <input type="email" id="email" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="tu@email.com">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-lock mr-2"></i>Contraseña
+                </label>
+                <input type="password" id="password" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Tu contraseña">
+            </div>
+
+            <button type="submit" id="submitBtn"
+                class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition duration-200 font-medium">
+                <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- Demo Accounts -->
+        <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+            <h3 class="text-sm font-semibold text-gray-700 mb-3">
+                <i class="fas fa-user-circle mr-2"></i>Cuentas Demo
+            </h3>
+            <div class="space-y-2 text-xs">
+                <div class="flex justify-between items-center p-2 bg-white rounded border">
+                    <span class="font-medium">Admin:</span>
+                    <span class="text-gray-600">admin1@stylecut.com / admin123</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-white rounded border">
+                    <span class="font-medium">Barbero:</span>
+                    <span class="text-gray-600">carlos@stylecut.com / barber123</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-white rounded border">
+                    <span class="font-medium">Cliente:</span>
+                    <span class="text-gray-600">juan.perez@email.com / client123</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Link -->
+        <div class="mt-6 text-center">
+            <p class="text-gray-600">
+                ¿No tienes cuenta? 
+                <a href="barber-registration.html" class="text-purple-600 hover:text-purple-700 font-medium">
+                    Regístrate aquí
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de login inline para GitHub Pages
+        const demoUsers = [
+            { id: '1', name: 'Admin User', email: 'admin1@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: '2', name: 'Admin Two', email: 'admin2@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: '3', name: 'Admin Three', email: 'admin3@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: '4', name: 'Carlos Rodríguez', email: 'carlos@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: '5', name: 'Juan Martínez', email: 'juan@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: '6', name: 'Miguel Ángel', email: 'miguel@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: '7', name: 'Juan Pérez', email: 'juan.perez@email.com', password: 'client123', role: 'client' },
+            { id: '8', name: 'María García', email: 'maria.garcia@email.com', password: 'client123', role: 'client' }
+        ];
+
+        // Inicializar usuarios en localStorage
+        function initUsers() {
+            if (!localStorage.getItem('users')) {
+                localStorage.setItem('users', JSON.stringify(demoUsers));
+                console.log('Usuarios demo inicializados:', demoUsers.length);
+            }
+        }
+
+        // Login function
+        function login(email, password) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Guardar sesión
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                sessionStorage.setItem('userRole', user.role);
+                sessionStorage.setItem('userEmail', user.email);
+                
+                // Generar token simple
+                const token = btoa(JSON.stringify({
+                    id: user.id,
+                    email: user.email,
+                    role: user.role,
+                    exp: Date.now() + (24 * 60 * 60 * 1000)
+                }));
+                
+                localStorage.setItem('authToken', token);
+                
+                return { success: true, user };
+            } else {
+                return { success: false, error: 'Credenciales inválidas' };
+            }
+        }
+
+        // Event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            initUsers();
+            
+            const loginForm = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Loading state
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Iniciando...';
+                submitBtn.disabled = true;
+                
+                // Simular delay
+                setTimeout(() => {
+                    const result = login(email, password);
+                    
+                    if (result.success) {
+                        submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>¡Login exitoso!';
+                        submitBtn.className = 'w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium';
+                        
+                        // Redirigir según rol
+                        setTimeout(() => {
+                            switch(result.user.role) {
+                                case 'admin':
+                                    window.location.href = 'admin-dashboard.html';
+                                    break;
+                                case 'barber':
+                                    window.location.href = 'barber-dashboard.html';
+                                    break;
+                                case 'client':
+                                    window.location.href = 'client-portal.html';
+                                    break;
+                                default:
+                                    window.location.href = 'index.html';
+                            }
+                        }, 1000);
+                    } else {
+                        // Error
+                        alert('Error de login: ' + result.error);
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        submitBtn.className = 'w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition duration-200 font-medium';
+                    }
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
