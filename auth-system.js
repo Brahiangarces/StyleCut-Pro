@@ -7,10 +7,27 @@ class AuthSystem {
     initStorage() {
         // Inicializar storage si no existe
         if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify([]));
+            // Agregar usuarios demo
+            const demoUsers = [
+                { id: '1', name: 'Admin User', email: 'admin1@stylecut.com', phone: '3001112222', password: 'admin123', role: 'admin', status: 'active', createdAt: new Date().toISOString() },
+                { id: '2', name: 'Admin Two', email: 'admin2@stylecut.com', phone: '3002223333', password: 'admin123', role: 'admin', status: 'active', createdAt: new Date().toISOString() },
+                { id: '3', name: 'Admin Three', email: 'admin3@stylecut.com', phone: '3003334444', password: 'admin123', role: 'admin', status: 'active', createdAt: new Date().toISOString() },
+                { id: '4', name: 'Carlos Rodríguez', email: 'carlos@stylecut.com', phone: '3009876543', password: 'barber123', role: 'barber', status: 'active', createdAt: new Date().toISOString() },
+                { id: '5', name: 'Juan Martínez', email: 'juan@stylecut.com', phone: '3005559876', password: 'barber123', role: 'barber', status: 'active', createdAt: new Date().toISOString() },
+                { id: '6', name: 'Miguel Ángel', email: 'miguel@stylecut.com', phone: '3002223333', password: 'barber123', role: 'barber', status: 'active', createdAt: new Date().toISOString() },
+                { id: '7', name: 'Juan Pérez', email: 'juan.perez@email.com', phone: '3001234567', password: 'client123', role: 'client', status: 'active', createdAt: new Date().toISOString() },
+                { id: '8', name: 'María García', email: 'maria.garcia@email.com', phone: '3005551234', password: 'client123', role: 'client', status: 'active', createdAt: new Date().toISOString() }
+            ];
+            localStorage.setItem('users', JSON.stringify(demoUsers));
         }
         if (!localStorage.getItem('barbers')) {
-            localStorage.setItem('barbers', JSON.stringify([]));
+            // Agregar barberos demo
+            const demoBarbers = [
+                { user_id: '4', specialty: 'Corte de Cabello', rating: 4.5, earnings: 0 },
+                { user_id: '5', specialty: 'Afeitado de Barba', rating: 4.5, earnings: 0 },
+                { user_id: '6', specialty: 'Todos los Servicios', rating: 4.5, earnings: 0 }
+            ];
+            localStorage.setItem('barbers', JSON.stringify(demoBarbers));
         }
         if (!localStorage.getItem('appointments')) {
             localStorage.setItem('appointments', JSON.stringify([]));
