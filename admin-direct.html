@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Directo Administrador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <div class="text-center mb-6">
+            <i class="fas fa-user-shield text-6xl text-red-600 mb-4"></i>
+            <h1 class="text-2xl font-bold text-gray-800">Acceso Administrador</h1>
+            <p class="text-gray-600 mt-2">Entrada directa al panel de administración</p>
+        </div>
+
+        <div class="space-y-4">
+            <button onclick="directAdminLogin()" 
+                class="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition font-medium">
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                Entrar como Administrador Principal
+            </button>
+            
+            <button onclick="directAdminLogin2()" 
+                class="w-full bg-red-500 text-white py-3 px-4 rounded-lg hover:bg-red-600 transition font-medium">
+                <i class="fas fa-user-shield mr-2"></i>
+                Entrar como Administrador Secundario
+            </button>
+            
+            <button onclick="directAdminLogin3()" 
+                class="w-full bg-red-400 text-white py-3 px-4 rounded-lg hover:bg-red-500 transition font-medium">
+                <i class="fas fa-user-cog mr-2"></i>
+                Entrar como Administrador Tercero
+            </button>
+        </div>
+
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-semibold text-gray-700 mb-2">Información de Acceso:</h3>
+            <div class="text-sm text-gray-600 space-y-1">
+                <p><strong>Admin 1:</strong> admin1@stylecut.com / admin123</p>
+                <p><strong>Admin 2:</strong> admin2@stylecut.com / admin123</p>
+                <p><strong>Admin 3:</strong> admin3@stylecut.com / admin123</p>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <a href="index.html" class="text-blue-600 hover:text-blue-700 text-sm">
+                <i class="fas fa-arrow-left mr-2"></i>Volver al inicio
+            </a>
+        </div>
+
+        <div id="status" class="mt-4 p-3 rounded-lg text-sm"></div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            const colors = {
+                'info': 'bg-blue-100 text-blue-800',
+                'success': 'bg-green-100 text-green-800',
+                'error': 'bg-red-100 text-red-800',
+                'warning': 'bg-yellow-100 text-yellow-800'
+            };
+            
+            status.className = `mt-4 p-3 rounded-lg text-sm ${colors[type]}`;
+            status.innerHTML = message;
+        }
+
+        function setupAdminSession(adminData) {
+            // Guardar datos de administrador
+            const adminUser = {
+                id: adminData.id,
+                name: adminData.name,
+                email: adminData.email,
+                role: 'admin',
+                status: 'active',
+                createdAt: new Date().toISOString()
+            };
+
+            // Guardar en sessionStorage
+            sessionStorage.setItem('currentUser', JSON.stringify(adminUser));
+            sessionStorage.setItem('userRole', 'admin');
+            sessionStorage.setItem('userEmail', adminUser.email);
+            sessionStorage.setItem('userData', JSON.stringify(adminUser));
+
+            // Guardar en localStorage
+            localStorage.setItem('authToken', btoa(JSON.stringify({
+                id: adminUser.id,
+                email: adminUser.email,
+                role: 'admin',
+                exp: Date.now() + (24 * 60 * 60 * 1000)
+            })));
+
+            // Guardar usuarios demo si no existen
+            if (!localStorage.getItem('users')) {
+                const demoUsers = [
+                    { id: '1', name: 'Admin User', email: 'admin1@stylecut.com', password: 'admin123', role: 'admin' },
+                    { id: '2', name: 'Admin Two', email: 'admin2@stylecut.com', password: 'admin123', role: 'admin' },
+                    { id: '3', name: 'Admin Three', email: 'admin3@stylecut.com', password: 'admin123', role: 'admin' },
+                    { id: '4', name: 'Carlos Rodríguez', email: 'carlos@stylecut.com', password: 'barber123', role: 'barber' },
+                    { id: '5', name: 'Juan Martínez', email: 'juan@stylecut.com', password: 'barber123', role: 'barber' },
+                    { id: '6', name: 'Miguel Ángel', email: 'miguel@stylecut.com', password: 'barber123', role: 'barber' },
+                    { id: '7', name: 'Juan Pérez', email: 'juan.perez@email.com', password: 'client123', role: 'client' },
+                    { id: '8', name: 'María García', email: 'maria.garcia@email.com', password: 'client123', role: 'client' }
+                ];
+                localStorage.setItem('users', JSON.stringify(demoUsers));
+            }
+
+            console.log('Sesión de administrador configurada:', adminUser);
+        }
+
+        function directAdminLogin() {
+            showStatus('Configurando acceso como Administrador Principal...', 'info');
+            
+            const adminData = {
+                id: '1',
+                name: 'Admin User',
+                email: 'admin1@stylecut.com'
+            };
+
+            setupAdminSession(adminData);
+            
+            setTimeout(() => {
+                showStatus('¡Acceso concedido! Redirigiendo al panel de administración...', 'success');
+                
+                setTimeout(() => {
+                    console.log('Redirigiendo a admin-dashboard.html');
+                    window.location.href = 'admin-dashboard.html';
+                }, 1000);
+            }, 500);
+        }
+
+        function directAdminLogin2() {
+            showStatus('Configurando acceso como Administrador Secundario...', 'info');
+            
+            const adminData = {
+                id: '2',
+                name: 'Admin Two',
+                email: 'admin2@stylecut.com'
+            };
+
+            setupAdminSession(adminData);
+            
+            setTimeout(() => {
+                showStatus('¡Acceso concedido! Redirigiendo al panel de administración...', 'success');
+                
+                setTimeout(() => {
+                    console.log('Redirigiendo a admin-dashboard.html');
+                    window.location.href = 'admin-dashboard.html';
+                }, 1000);
+            }, 500);
+        }
+
+        function directAdminLogin3() {
+            showStatus('Configurando acceso como Administrador Tercero...', 'info');
+            
+            const adminData = {
+                id: '3',
+                name: 'Admin Three',
+                email: 'admin3@stylecut.com'
+            };
+
+            setupAdminSession(adminData);
+            
+            setTimeout(() => {
+                showStatus('¡Acceso concedido! Redirigiendo al panel de administración...', 'success');
+                
+                setTimeout(() => {
+                    console.log('Redirigiendo a admin-dashboard.html');
+                    window.location.href = 'admin-dashboard.html';
+                }, 1000);
+            }, 500);
+        }
+
+        // Verificar si ya está logueado como admin
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            const userRole = sessionStorage.getItem('userRole');
+            
+            if (currentUser && userRole === 'admin') {
+                showStatus('Ya tienes una sesión de administrador activa. Redirigiendo...', 'info');
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
