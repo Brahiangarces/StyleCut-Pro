@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de Barberías | BarberHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .brand-purple {
+            background-color: #6B46C1;
+        }
+        .brand-purple:hover {
+            background-color: #5B3FA0;
+        }
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .rating-star {
+            color: #fbbf24;
+        }
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-cut text-3xl text-purple-600"></i>
+                    <span class="text-2xl font-bold text-gray-900">BarberHub</span>
+                    <span class="text-gray-600">| Directorio de Barberías</span>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <button onclick="showAllBarbers()" class="text-gray-700 hover:text-purple-600 transition">Todas</button>
+                    <button onclick="showNearbyBarbers()" class="text-gray-700 hover:text-purple-600 transition">Cerca de mí</button>
+                    <button onclick="showTopRated()" class="text-gray-700 hover:text-purple-600 transition">Mejor valoradas</button>
+                    <a href="barber-registration.html" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-plus mr-2"></i>Registrar Barbería
+                    </a>
+                    <button onclick="window.location.href='index.html'" class="brand-purple text-white px-4 py-2 rounded-lg hover:shadow-lg transition">
+                        <i class="fas fa-home mr-2"></i>Inicio
+                    </button>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="barber-registration.html" class="md:hidden bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                        <i class="fas fa-plus mr-2"></i>Registrar
+                    </a>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-gray-700">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-4 space-y-3">
+                <button onclick="showAllBarbers()" class="block w-full text-left text-gray-700 hover:text-purple-600">Todas</button>
+                <button onclick="showNearbyBarbers()" class="block w-full text-left text-gray-700 hover:text-purple-600">Cerca de mí</button>
+                <button onclick="showTopRated()" class="block w-full text-left text-gray-700 hover:text-purple-600">Mejor valoradas</button>
+                <a href="barber-registration.html" class="block w-full text-left text-green-600 hover:text-green-700 font-semibold">
+                    <i class="fas fa-plus mr-2"></i>Registrar Barbería
+                </a>
+                <button onclick="window.location.href='index.html'" class="block w-full text-left text-gray-700 hover:text-purple-600">Inicio</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Section -->
+    <section class="bg-gradient-to-r from-purple-600 to-purple-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Encuentra tu Barbería Perfecta</h1>
+                <p class="text-xl text-purple-100 mb-8">Descubre las mejores barberías en tu área</p>
+                
+                <!-- Prominent Registration Button -->
+                <div class="bg-white/10 backdrop-blur rounded-lg p-6 max-w-2xl mx-auto">
+                    <h3 class="text-2xl font-semibold text-white mb-4">¿Eres Barbero?</h3>
+                    <p class="text-purple-100 mb-6">Únete a BarberHub y alcanza a más clientes. Registra tu barbería en minutos.</p>
+                    <a href="barber-registration.html" class="inline-block bg-white text-purple-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition transform hover:scale-105">
+                        <i class="fas fa-plus-circle mr-2"></i>Registra tu Barbería Gratis
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="max-w-3xl mx-auto">
+                <div class="bg-white rounded-lg shadow-lg p-2">
+                    <div class="flex flex-col md:flex-row gap-2">
+                        <div class="flex-1 relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="searchInput" placeholder="Buscar por nombre, ubicación o servicios..." 
+                                   class="w-full pl-10 pr-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-600 rounded">
+                        </div>
+                        <button onclick="searchBarbers()" class="beunik-purple px-6 py-3 rounded-lg hover:shadow-lg transition">
+                            <i class="fas fa-search mr-2"></i>Buscar
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filter Tags -->
+                <div class="mt-4 flex flex-wrap gap-2 justify-center">
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-purple-200" onclick="filterByService('corte')">Corte de Cabello</span>
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-purple-200" onclick="filterByService('barba')">Afeitado</span>
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-purple-200" onclick="filterByService('tratamiento')">Tratamientos</span>
+                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-purple-200" onclick="filterByService('color')">Color</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-8 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="fade-in">
+                    <div class="text-3xl font-bold text-purple-600" id="barbersCount">1</div>
+                    <div class="text-gray-600">Barberías</div>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.1s">
+                    <div class="text-3xl font-bold text-purple-600" id="barbersTotalCount">1</div>
+                    <div class="text-gray-600">Barberos</div>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.2s">
+                    <div class="text-3xl font-bold text-purple-600">10K+</div>
+                    <div class="text-gray-600">Clientes Felices</div>
+                </div>
+                    <div class="text-3xl font-bold text-purple-600">4.8</div>
+                    <div class="text-gray-600">Rating Promedio</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Barbers Grid -->
+    <main class="container mx-auto px-4 py-12">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">Barberías Destacadas</h2>
+            <div class="flex items-center space-x-4">
+                <select id="sortBy" onchange="sortBarbers()" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+                    <option value="rating">Mejor valoradas</option>
+                    <option value="distance">Más cercanas</option>
+                    <option value="price">Menor precio</option>
+                    <option value="name">Alfabético</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="barbersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Barber cards will be loaded here -->
+        </div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-12">
+            <button onclick="loadMoreBarbers()" class="brand-purple text-white px-8 py-3 rounded-lg hover:shadow-lg transition">
+                Cargar Más Barberías
+            </button>
+        </div>
+    </main>
+
+    <!-- Barber Detail Modal -->
+    <div id="barberDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div id="modalContent">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-cut text-2xl text-purple-400"></i>
+                        <span class="text-xl font-bold">BarberHub</span>
+                    </div>
+                    <p class="text-gray-400">La mejor plataforma para encontrar barberías de calidad en tu área.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Para Barberos</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="barber-registration.html" class="hover:text-white transition">Registra tu barbería</a></li>
+                        <li><a href="#" class="hover:text-white transition">Gestiona tu agenda</a></li>
+                        <li><a href="#" class="hover:text-white transition">Atrae más clientes</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Para Clientes</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Buscar barberías</a></li>
+                        <li><a href="#" class="hover:text-white transition">Reservar citas</a></li>
+                        <li><a href="#" class="hover:text-white transition">Dejar reseñas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contacto</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-envelope mr-2"></i>info@beunik.co</li>
+                        <li><i class="fas fa-phone mr-2"></i>300 123 4567</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>Sabaneta, Antioquia</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 BarberHub. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="barber-directory.js"></script>
+</body>
+</html>

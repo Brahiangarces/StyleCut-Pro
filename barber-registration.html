@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Barbería | BarberHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .brand-purple {
+            background-color: #6B46C1;
+        }
+        .brand-purple:hover {
+            background-color: #5B3FA0;
+        }
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+        .step-indicator.active {
+            background-color: #6B46C1;
+            color: white;
+        }
+        .step-indicator.completed {
+            background-color: #10b981;
+            color: white;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-cut text-3xl text-purple-600"></i>
+                    <span class="text-2xl font-bold text-gray-900">BarberHub</span>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="index.html" class="text-gray-700 hover:text-purple-600 transition">Inicio</a>
+                    <a href="barber-directory.html" class="text-gray-700 hover:text-purple-600 transition">Directorio</a>
+                    <a href="login.html" class="text-gray-700 hover:text-purple-600 transition">Iniciar Sesión</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-purple-600 to-purple-800 text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Únete a BarberHub</h1>
+            <p class="text-xl text-purple-100 mb-8">Registra tu barbería y alcanza a más clientes</p>
+            <div class="flex justify-center space-x-4">
+                <div class="step-indicator active rounded-full w-12 h-12 flex items-center justify-center font-bold">1</div>
+                <div class="step-indicator rounded-full w-12 h-12 flex items-center justify-center bg-white/20 font-bold">2</div>
+                <div class="step-indicator rounded-full w-12 h-12 flex items-center justify-center bg-white/20 font-bold">3</div>
+                <div class="step-indicator rounded-full w-12 h-12 flex items-center justify-center bg-white/20 font-bold">4</div>
+            </div>
+            <div class="flex justify-center space-x-8 mt-4 text-sm">
+                <span>Información Básica</span>
+                <span>Servicios</span>
+                <span>Ubicación</span>
+                <span>Revisión</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Form -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <form id="barberRegistrationForm" class="space-y-8">
+                <!-- Step 1: Basic Information -->
+                <div id="step1" class="fade-in">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Información Básica</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Barbería *</label>
+                                <input type="text" id="shopName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Ej: La Barbería de Carlos">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                                <input type="email" id="barberEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="correo@barberia.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono *</label>
+                                <input type="tel" id="barberPhone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="300 123 4567">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
+                                <input type="password" id="barberPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Crea tu contraseña">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña *</label>
+                                <input type="password" id="confirmPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Confirma tu contraseña">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Año de Establecimiento</label>
+                                <input type="number" id="establishedYear" min="1900" max="2024" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Ej: 2014">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Sitio Web (opcional)</label>
+                                <input type="url" id="website" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="www.tubarberia.com">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción de la Barbería *</label>
+                            <textarea id="description" required rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Describe tu barbería, experiencia, especialidades..."></textarea>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Logo de la Barbería (opcional)</label>
+                            <div class="flex items-center space-x-4">
+                                <div id="logoPreview" class="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-camera text-gray-400 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <input type="file" id="logoUpload" accept="image/*" class="hidden">
+                                    <button type="button" onclick="document.getElementById('logoUpload').click()" class="bg-purple-100 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+                                        <i class="fas fa-upload mr-2"></i>Subir Logo
+                                    </button>
+                                    <p class="text-sm text-gray-500 mt-1">Formato: JPG, PNG (máx. 5MB)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Services -->
+                <div id="step2" class="fade-in hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Servicios Ofrecidos</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <input type="text" class="service-name px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Nombre del servicio">
+                                    <input type="text" class="service-price px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Precio">
+                                    <input type="text" class="service-duration px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Duración">
+                                    <button type="button" onclick="removeService(this)" class="bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" onclick="addService()" class="mt-4 bg-purple-100 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+                            <i class="fas fa-plus mr-2"></i>Agregar Servicio
+                        </button>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Especialidades</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" value="Cortes Modernos" class="specialty-checkbox mr-2">
+                                    <span>Cortes Modernos</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" value="Afeitado Tradicional" class="specialty-checkbox mr-2">
+                                    <span>Afeitado Tradicional</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" value="Tratamientos Capilares" class="specialty-checkbox mr-2">
+                                    <span>Tratamientos Capilares</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" value="Coloración" class="specialty-checkbox mr-2">
+                                    <span>Coloración</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" value="Cortes Infantiles" class="specialty-checkbox mr-2">
+                                    <span>Cortes Infantiles</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" value="Peinados" class="specialty-checkbox mr-2">
+                                    <span>Peinados</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Location -->
+                <div id="step3" class="fade-in hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Ubicación y Horario</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Dirección Completa *</label>
+                                <input type="text" id="address" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Cra. 44 #64 B Sur 15, Sabaneta, Antioquia">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad *</label>
+                                <input type="text" id="city" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Sabaneta">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Departamento *</label>
+                                <input type="text" id="department" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Antioquia">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <div class="flex items-center space-x-4">
+                                <button type="button" onclick="getCurrentLocation()" class="bg-purple-100 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+                                    <i class="fas fa-location-arrow mr-2"></i>Obtener Ubicación Actual
+                                </button>
+                                <span id="locationStatus" class="text-sm text-gray-600"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Horario de Atención</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Lunes</label>
+                                    <input type="text" id="monday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="9:00 AM - 7:00 PM">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Martes</label>
+                                    <input type="text" id="tuesday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="9:00 AM - 7:00 PM">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Miércoles</label>
+                                    <input type="text" id="wednesday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="9:00 AM - 7:00 PM">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Jueves</label>
+                                    <input type="text" id="thursday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="9:00 AM - 8:00 PM">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Viernes</label>
+                                    <input type="text" id="friday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="9:00 AM - 8:00 PM">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Sábado</label>
+                                    <input type="text" id="saturday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="8:00 AM - 6:00 PM">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Domingo</label>
+                                    <input type="text" id="sunday" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="10:00 AM - 4:00 PM">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Review -->
+                <div id="step4" class="fade-in hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Revisión de Información</h2>
+                        
+                        <div id="reviewContent" class="space-y-6">
+                            <!-- Review content will be generated here -->
+                        </div>
+                        
+                        <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <div class="flex items-start">
+                                <i class="fas fa-info-circle text-yellow-600 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-semibold text-yellow-800">Proceso de Aprobación</h4>
+                                    <p class="text-yellow-700 text-sm mt-1">
+                                        Tu registro será revisado por nuestro equipo administrativo. Recibirás un email dentro de 24-48 horas con el estado de tu solicitud.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" id="termsAccept" required class="mr-2">
+                                <span class="text-sm text-gray-600">
+                                    Acepto los <a href="#" class="text-purple-600 hover:underline">términos y condiciones</a> y la <a href="#" class="text-purple-600 hover:underline">política de privacidad</a> de BarberHub
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8">
+                    <button type="button" id="prevBtn" onclick="changeStep(-1)" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition hidden">
+                        <i class="fas fa-arrow-left mr-2"></i>Anterior
+                    </button>
+                    
+                    <div class="flex space-x-4">
+                        <button type="button" id="nextBtn" onclick="changeStep(1)" class="brand-purple text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition">
+                            Siguiente<i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                        
+                        <button type="submit" id="submitBtn" class="brand-purple text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition hidden">
+                            <i class="fas fa-paper-plane mr-2"></i>Enviar Registro
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <i class="fas fa-cut text-2xl text-purple-400"></i>
+                <span class="text-xl font-bold">BarberHub</span>
+            </div>
+            <p class="text-gray-400">La plataforma definitiva para barberías profesionales</p>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-gray-400">
+                <p>&copy; 2024 BarberHub. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="barber-registration.js"></script>
+</body>
+</html>

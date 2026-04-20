@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beunik - Inicio de Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+    <script src="data-manager.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .role-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .role-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <div class="glass-effect rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <i class="fas fa-spa text-4xl text-purple-600"></i>
+                <span class="text-3xl font-bold text-gray-800">StyleCut Pro</span>
+            </div>
+            <h2 class="text-xl text-gray-600">Sistema de Reservas</h2>
+        </div>
+
+        <!-- Role Selection (Only for Clients) -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Iniciar Sesión</h2>
+            <div class="max-w-md mx-auto">
+                <div class="role-card bg-white rounded-xl p-6 shadow-lg cursor-pointer hover:shadow-xl transition" onclick="selectRole('client')">
+                    <div class="text-center">
+                        <i class="fas fa-user text-4xl text-purple-600 mb-4"></i>
+                        <h3 class="font-semibold text-gray-800 text-lg">Cliente</h3>
+                        <p class="text-gray-600 mt-2">Agendar servicios</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6">
+                <p class="text-sm text-gray-600">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Barberos y Administradores pueden iniciar sesión directamente sin seleccionar rol
+                </p>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex mb-6 border-b border-gray-200">
+            <button id="loginTab" class="flex-1 pb-3 text-center font-semibold text-purple-600 border-b-2 border-purple-600 transition" onclick="switchTab('login')">
+                Iniciar Sesión
+            </button>
+            <button id="registerTab" class="flex-1 pb-3 text-center font-semibold text-gray-500 hover:text-gray-700 transition" onclick="switchTab('register')">
+                Registrarse
+            </button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="loginEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent" required>
+            </div>
+            
+            <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="space-y-4 hidden">
+            <!-- Registration Notice -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-sm text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Registro exclusivo para clientes. Crea tu cuenta para agendar servicios.
+                </p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                <input type="text" id="registerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="registerEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                <input type="tel" id="registerPhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent" required>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                <input type="password" id="registerPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent" required minlength="6">
+                <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
+                <input type="password" id="confirmPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent" required minlength="6">
+            </div>
+            
+            <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                Crear Cuenta de Cliente
+            </button>
+        </form>
+
+        <!-- Quick Access for Demo -->
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <p class="text-sm text-gray-600 mb-3">Acceso rápido para demostración:</p>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="quickLogin('client')" class="bg-purple-100 text-purple-600 px-2 py-1 rounded text-xs hover:bg-purple-200 transition">
+                    Cliente Demo
+                </button>
+                <button onclick="quickLogin('barber')" class="bg-purple-100 text-purple-600 px-2 py-1 rounded text-xs hover:bg-purple-200 transition">
+                    Barbero Demo
+                </button>
+                <button onclick="quickLogin('admin')" class="bg-purple-100 text-purple-600 px-2 py-1 rounded text-xs hover:bg-purple-200 transition">
+                    Admin Demo
+                </button>
+            </div>
+            <p class="text-xs text-gray-500 mt-3">Admin exclusivo: garce@beunik.co / master2024</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedRole = sessionStorage.getItem('intendedRole');
+        let currentTab = 'login';
+
+        // Auto-select role if coming from landing page
+        if (selectedRole) {
+            const roleIndex = selectedRole === 'client' ? 0 : selectedRole === 'barber' ? 1 : 2;
+            document.querySelectorAll('.role-card')[roleIndex].classList.add('selected');
+            // Clear intended role after using it
+            sessionStorage.removeItem('intendedRole');
+        }
+
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // Update UI
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab styles
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            
+            if (tab === 'login') {
+                loginTab.classList.add('text-purple-600', 'border-b-2', 'border-purple-600');
+                loginTab.classList.remove('text-gray-500');
+                registerTab.classList.remove('text-purple-600', 'border-b-2', 'border-purple-600');
+                registerTab.classList.add('text-gray-500');
+                
+                // Show login form, hide register form
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+            } else {
+                registerTab.classList.add('text-purple-600', 'border-b-2', 'border-purple-600');
+                registerTab.classList.remove('text-gray-500');
+                loginTab.classList.remove('text-purple-600', 'border-b-2', 'border-purple-600');
+                loginTab.classList.add('text-gray-500');
+                
+                // Show register form, hide login form
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('loginForm').classList.add('hidden');
+            }
+        }
+
+        function quickLogin(role) {
+            selectedRole = role;
+            
+            // Update UI
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.role-card')[role === 'client' ? 0 : role === 'barber' ? 1 : 2].classList.add('selected');
+            
+            // Fill demo credentials
+            document.getElementById('loginEmail').value = `demo@${role}.com`;
+            document.getElementById('loginPassword').value = 'demo123';
+            
+            // Switch to login tab
+            switchTab('login');
+        }
+
+        // Login form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('loginEmail').value;
+                    const password = document.getElementById('loginPassword').value;
+                    
+                    // Show loading state
+                    const submitBtn = loginForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Iniciando sesión...';
+                    submitBtn.disabled = true;
+                    
+                    try {
+                        console.log('Attempting login with:', email);
+                        
+                        // Direct API call with working configuration
+                        const response = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ email, password }),
+                            mode: 'cors'
+                        });
+                        
+                        console.log('Response status:', response.status);
+                        const data = await response.json();
+                        console.log('Response data:', data);
+                        
+                        if (response.ok) {
+                            // Store user session
+                            sessionStorage.setItem('userRole', data.user.role);
+                            sessionStorage.setItem('userEmail', data.user.email);
+                            sessionStorage.setItem('userData', JSON.stringify(data.user));
+                            localStorage.setItem('stylecut_token', data.token);
+                            
+                            // Show success message
+                            submitBtn.textContent = '¡Login exitoso!';
+                            submitBtn.classList.add('bg-green-600');
+                            
+                            // Redirect after a short delay
+                            setTimeout(() => {
+                                switch(data.user.role) {
+                                    case 'client':
+                                        window.location.href = 'client-portal.html';
+                                        break;
+                                    case 'barber':
+                                        window.location.href = 'barber-dashboard.html';
+                                        break;
+                                    case 'admin':
+                                        window.location.href = 'admin-dashboard.html';
+                                        break;
+                                }
+                            }, 1000);
+                            
+                        } else {
+                            throw new Error(data.error || 'Error desconocido');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        
+                        // Show detailed error
+                        const errorMsg = error.message || 'Error de conexión con el servidor';
+                        alert(`Error de login: ${errorMsg}\n\nVerifica:\n1. Las credenciales sean correctas\n2. El servidor backend esté funcionando\n3. No hay problemas de red`);
+                        
+                        // Reset button state
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('bg-green-600');
+                    }
+                });
+            }
+        });
+
+        // Register form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+            
+                    const name = document.getElementById('registerName').value;
+                    const email = document.getElementById('registerEmail').value;
+                    const phone = document.getElementById('registerPhone').value;
+                    const password = document.getElementById('registerPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    
+                    // Validate passwords match
+                    if (password !== confirmPassword) {
+                        alert('Las contraseñas no coinciden');
+                        return;
+                    }
+                    
+                    try {
+                        // Show loading state
+                        const submitBtn = registerForm.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+                        submitBtn.textContent = 'Registrando...';
+                        submitBtn.disabled = true;
+                        
+                        // Create new user using real API
+                        const response = await DataManager.registerUser({
+                            name: name,
+                            email: email,
+                            phone: phone,
+                            password: password,
+                            confirmPassword: confirmPassword
+                        });
+                        
+                        alert('Registro exitoso. Ahora puedes iniciar sesión.');
+                        switchTab('login');
+                        
+                    } catch (error) {
+                        console.error('Register error:', error);
+                        alert('Error al registrar usuario: ' + error.message);
+                        
+                        // Reset button state
+                        const submitBtn = registerForm.querySelector('button[type="submit"]');
+                        submitBtn.textContent = 'Registrarse';
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

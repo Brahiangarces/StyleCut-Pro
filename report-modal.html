@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Ganancias - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <div class="container mx-auto px-6 py-8">
+        <div class="glass-effect rounded-2xl p-8">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">
+                    <i class="fas fa-chart-line mr-3"></i>
+                    Reporte de Ganancias Semanales
+                </h1>
+                <div class="flex space-x-4">
+                    <button onclick="exportToPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition">
+                        <i class="fas fa-file-pdf mr-2"></i>
+                        Exportar PDF
+                    </button>
+                    <button onclick="exportToWord()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-file-word mr-2"></i>
+                        Exportar Word
+                    </button>
+                    <button onclick="window.close()" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition">
+                        <i class="fas fa-times mr-2"></i>
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Period Selection -->
+            <div class="mb-8">
+                <label class="block text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-calendar-alt mr-2"></i>
+                    Seleccionar Período
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Semana</label>
+                        <select id="weekSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                            <option value="current">Semana Actual</option>
+                            <option value="last">Semana Pasada</option>
+                            <option value="last4">Últimas 4 Semanas</option>
+                            <option value="month">Mes Actual</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Año</label>
+                        <select id="yearSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Reporte</label>
+                        <select id="reportType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                            <option value="earnings">Ganancias por Servicios</option>
+                            <option value="appointments">Citas por Día</option>
+                            <option value="clients">Clientes Frecuentes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card glass-effect rounded-xl p-6 text-center">
+                    <i class="fas fa-dollar-sign text-3xl text-green-600 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800" id="totalEarnings">$0</h3>
+                    <p class="text-gray-600">Ganancias Totales</p>
+                </div>
+                <div class="stat-card glass-effect rounded-xl p-6 text-center">
+                    <i class="fas fa-calendar-check text-3xl text-blue-600 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800" id="totalAppointments">0</h3>
+                    <p class="text-gray-600">Total de Citas</p>
+                </div>
+                <div class="stat-card glass-effect rounded-xl p-6 text-center">
+                    <i class="fas fa-users text-3xl text-purple-600 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800" id="totalClients">0</h3>
+                    <p class="text-gray-600">Clientes Atendidos</p>
+                </div>
+                <div class="stat-card glass-effect rounded-xl p-6 text-center">
+                    <i class="fas fa-clock text-3xl text-orange-600 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800" id="avgServiceTime">0</h3>
+                    <p class="text-gray-600">Tiempo Promedio</p>
+                </div>
+            </div>
+
+            <!-- Detailed Report -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Reporte Detallado
+                </h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr class="bg-purple-100">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Fecha</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Servicio</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Cliente</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Duración</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Ganancia</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Report data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data (in real implementation, this would come from the backend)
+        const sampleData = {
+            earnings: {
+                total: 450000,
+                appointments: 25,
+                clients: 18,
+                avgTime: 45
+            },
+            details: [
+                {
+                    date: '2024-04-08',
+                    service: 'Corte de Cabello',
+                    client: 'Juan Pérez',
+                    duration: '45 min',
+                    earnings: 15000
+                },
+                {
+                    date: '2024-04-08',
+                    service: 'Afeitado de Barba',
+                    client: 'María García',
+                    duration: '30 min',
+                    earnings: 10000
+                },
+                {
+                    date: '2024-04-09',
+                    service: 'Servicio Completo',
+                    client: 'Carlos Rodríguez',
+                    duration: '90 min',
+                    earnings: 20000
+                }
+            ]
+        };
+
+        // Initialize year select
+        function initializeYearSelect() {
+            const yearSelect = document.getElementById('yearSelect');
+            const currentYear = new Date().getFullYear();
+            
+            for (let year = currentYear; year >= currentYear - 5; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+            
+            yearSelect.value = currentYear;
+        }
+
+        // Update report display
+        function updateReport() {
+            const weekSelect = document.getElementById('weekSelect').value;
+            const yearSelect = document.getElementById('yearSelect').value;
+            const reportType = document.getElementById('reportType').value;
+            
+            // Update summary stats
+            document.getElementById('totalEarnings').textContent = `$${sampleData.earnings.total.toLocaleString()}`;
+            document.getElementById('totalAppointments').textContent = sampleData.earnings.appointments;
+            document.getElementById('totalClients').textContent = sampleData.earnings.clients;
+            document.getElementById('avgServiceTime').textContent = `${sampleData.earnings.avgTime} min`;
+            
+            // Update table
+            updateReportTable(sampleData.details);
+        }
+
+        // Update report table
+        function updateReportTable(data) {
+            const tableBody = document.getElementById('reportTableBody');
+            tableBody.innerHTML = '';
+            
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${item.date}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${item.service}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${item.client}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${item.duration}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-green-600">$${item.earnings.toLocaleString()}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Export to PDF (simplified version)
+        function exportToPDF() {
+            try {
+                // Create a simple text-based PDF content
+                let pdfContent = 'Reporte de Ganancias - StyleCut Pro\n\n';
+                pdfContent += 'RESUMEN SEMANAL\n';
+                pdfContent += '================\n\n';
+                pdfContent += `Ganancias Totales: $${sampleData.earnings.total.toLocaleString()}\n`;
+                pdfContent += `Total de Citas: ${sampleData.earnings.appointments}\n`;
+                pdfContent += `Clientes Atendidos: ${sampleData.earnings.clients}\n`;
+                pdfContent += `Tiempo Promedio: ${sampleData.earnings.avgTime} minutos\n\n`;
+                
+                pdfContent += 'REPORTE DETALLADO\n';
+                pdfContent += '==================\n\n';
+                
+                sampleData.details.forEach((item, index) => {
+                    pdfContent += `${index + 1}. ${item.date}\n`;
+                    pdfContent += `   Servicio: ${item.service}\n`;
+                    pdfContent += `   Cliente: ${item.client}\n`;
+                    pdfContent += `   Duración: ${item.duration}\n`;
+                    pdfContent += `   Ganancia: $${item.earnings.toLocaleString()}\n\n`;
+                });
+                
+                // Create a blob and download as text file (can be opened as PDF)
+                const blob = new Blob([pdfContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'reporte_ganancias_stylecut.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('Reporte exportado como archivo de texto. Puedes convertirlo a PDF si lo necesitas.');
+            } catch (error) {
+                console.error('Error al exportar PDF:', error);
+                alert('Error al exportar PDF. Por favor, intenta con la opción de Word.');
+            }
+        }
+
+        // Export to Word (simplified version)
+        function exportToWord() {
+            try {
+                let htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Ganancias - StyleCut Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #667eea; font-size: 24px; margin-bottom: 20px; text-align: center; }
+        h2 { color: #333; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #667eea; padding-bottom: 5px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th { background-color: #667eea; color: white; padding: 10px; text-align: left; }
+        td { border: 1px solid #ddd; padding: 10px; }
+        .summary { background-color: #f5f5f5; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .total { font-weight: bold; color: #667eea; font-size: 18px; }
+        .footer { margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>Reporte de Ganancias - StyleCut Pro</h1>
+    
+    <div class="summary">
+        <h2>Resumen Semanal</h2>
+        <p><strong>Ganancias Totales:</strong> <span class="total">$${sampleData.earnings.total.toLocaleString()}</span></p>
+        <p><strong>Total de Citas:</strong> ${sampleData.earnings.appointments}</p>
+        <p><strong>Clientes Atendidos:</strong> ${sampleData.earnings.clients}</p>
+        <p><strong>Tiempo Promedio:</strong> ${sampleData.earnings.avgTime} minutos</p>
+    </div>
+    
+    <h2>Reporte Detallado</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Servicio</th>
+                <th>Cliente</th>
+                <th>Duración</th>
+                <th>Ganancia</th>
+            </tr>
+        </thead>
+        <tbody>
+                `;
+                
+                sampleData.details.forEach(item => {
+                    htmlContent += `
+            <tr>
+                <td>${item.date}</td>
+                <td>${item.service}</td>
+                <td>${item.client}</td>
+                <td>${item.duration}</td>
+                <td><strong>$${item.earnings.toLocaleString()}</strong></td>
+            </tr>
+                    `;
+                });
+                
+                htmlContent += `
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <p>Reporte generado el ${new Date().toLocaleDateString('es-CO')}</p>
+        <p>StyleCut Pro - Sistema de Gestión de Barberías</p>
+    </div>
+</body>
+</html>
+                `;
+                
+                // Create and download the Word document
+                const blob = new Blob([htmlContent], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'reporte_ganancias_stylecut.doc';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('Reporte exportado exitosamente como archivo Word (.doc)');
+            } catch (error) {
+                console.error('Error al exportar Word:', error);
+                alert('Error al exportar Word. Por favor, intenta de nuevo.');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('weekSelect').addEventListener('change', updateReport);
+        document.getElementById('yearSelect').addEventListener('change', updateReport);
+        document.getElementById('reportType').addEventListener('change', updateReport);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeYearSelect();
+            updateReport();
+        });
+    </script>
+</body>
+</html>

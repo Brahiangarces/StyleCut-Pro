@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Debug - Registro de Barberos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">🔍 Auto Debug - Registro de Barberos</h1>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Estado del Sistema</h2>
+            <div id="status" class="space-y-2"></div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Usuarios Existentes</h2>
+            <div id="users" class="space-y-2"></div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Prueba de Registro</h2>
+            <div id="test-result" class="space-y-2"></div>
+        </div>
+        
+        <div class="flex space-x-4">
+            <button onclick="runAllTests()" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600">
+                🚀 Ejecar Todas las Pruebas
+            </button>
+            <button onclick="clearResults()" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600">
+                🗑️ Limpiar Resultados
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let results = [];
+        
+        function addResult(title, message, type = 'info') {
+            const colors = {
+                'success': 'bg-green-100 text-green-800',
+                'error': 'bg-red-100 text-red-800', 
+                'warning': 'bg-yellow-100 text-yellow-800',
+                'info': 'bg-blue-100 text-blue-800'
+            };
+            
+            results.push({ title, message, type, time: new Date().toLocaleTimeString() });
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const statusDiv = document.getElementById('status');
+            const usersDiv = document.getElementById('users');
+            const testDiv = document.getElementById('test-result');
+            
+            // Actualizar estado
+            const statusResults = results.filter(r => r.title.includes('Token') || r.title.includes('Conexión'));
+            statusDiv.innerHTML = statusResults.map(r => `
+                <div class="p-3 rounded ${r.type === 'success' ? 'bg-green-100 text-green-800' : r.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}">
+                    <strong>${r.title}:</strong> ${r.message}
+                </div>
+            `).join('');
+            
+            // Actualizar usuarios
+            const userResults = results.filter(r => r.title.includes('Email'));
+            usersDiv.innerHTML = userResults.map(r => `
+                <div class="p-3 rounded ${r.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                    <strong>${r.title}:</strong> ${r.message}
+                </div>
+            `).join('');
+            
+            // Actualizar prueba
+            const testResults = results.filter(r => r.title.includes('Registro'));
+            testDiv.innerHTML = testResults.map(r => `
+                <div class="p-3 rounded ${r.type === 'success' ? 'bg-green-100 text-green-800' : r.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}">
+                    <strong>${r.title}:</strong> ${r.message}
+                </div>
+            `).join('');
+        }
+        
+        async function checkToken() {
+            const token = localStorage.getItem('stylecut_token');
+            if (token) {
+                addResult('Token', '✅ Token encontrado en localStorage', 'success');
+                return token;
+            } else {
+                addResult('Token', '❌ No hay token en localStorage', 'error');
+                return null;
+            }
+        }
+        
+        async function checkExistingUsers() {
+            const token = localStorage.getItem('stylecut_token');
+            if (!token) {
+                addResult('Conexión', '❌ No se puede verificar usuarios sin token', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const users = await response.json();
+                    addResult('Conexión', '✅ Conexión exitosa al servidor', 'success');
+                    
+                    // Verificar emails problemáticos
+                    const problemEmails = ['estela@gmai.com', 'brahiangarcesmartinez@gmail.com'];
+                    problemEmails.forEach(email => {
+                        const exists = users.some(u => u.email === email);
+                        addResult(`Email ${email}`, exists ? '✅ Ya existe' : '❌ No existe', exists ? 'warning' : 'info');
+                    });
+                    
+                    return users;
+                } else {
+                    addResult('Conexión', '❌ Error al obtener usuarios', 'error');
+                }
+            } catch (error) {
+                addResult('Conexión', `❌ Error de red: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testNewRegistration() {
+            const token = localStorage.getItem('stylecut_token');
+            if (!token) {
+                addResult('Registro', '❌ No se puede registrar sin token', 'error');
+                return;
+            }
+            
+            const timestamp = Date.now();
+            const testBarber = {
+                name: `Test Barber ${timestamp}`,
+                email: `testbarber${timestamp}@test.com`,
+                phone: `300${timestamp.toString().slice(-7)}`,
+                password: 'barber123',
+                specialty: 'Corte de Cabello'
+            };
+            
+            try {
+                const response = await fetch('/api/barbers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(testBarber)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addResult('Registro', `✅ Barbero creado: ${data.message}`, 'success');
+                } else {
+                    addResult('Registro', `❌ Error: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                addResult('Registro', `❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            addResult('Sistema', '🚀 Iniciando pruebas automáticas...', 'info');
+            
+            await checkToken();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkExistingUsers();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testNewRegistration();
+            
+            addResult('Sistema', '✅ Pruebas completadas', 'success');
+        }
+        
+        function clearResults() {
+            results = [];
+            updateDisplay();
+        }
+        
+        // Auto-ejecutar al cargar la página
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descarga Directa - Reporte de Ganancias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">
+            <i class="fas fa-download mr-3"></i>
+            Descarga Directa del Reporte
+        </h1>
+
+        <!-- Report Content -->
+        <div class="mb-8">
+            <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                <h2 class="text-xl font-semibold text-blue-800 mb-4">Resumen Semanal</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-gray-600">Ganancias Totales:</span>
+                        <span class="font-bold text-green-600 ml-2">$450,000</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Total de Citas:</span>
+                        <span class="font-bold text-blue-600 ml-2">25</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Clientes Atendidos:</span>
+                        <span class="font-bold text-purple-600 ml-2">18</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Tiempo Promedio:</span>
+                        <span class="font-bold text-orange-600 ml-2">45 min</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Detalles de Citas</h2>
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border p-2 text-left">Fecha</th>
+                            <th class="border p-2 text-left">Servicio</th>
+                            <th class="border p-2 text-left">Cliente</th>
+                            <th class="border p-2 text-left">Duración</th>
+                            <th class="border p-2 text-left">Ganancia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border p-2">2024-04-08</td>
+                            <td class="border p-2">Corte de Cabello</td>
+                            <td class="border p-2">Juan Pérez</td>
+                            <td class="border p-2">45 min</td>
+                            <td class="border p-2 font-bold text-green-600">$15,000</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2">2024-04-08</td>
+                            <td class="border p-2">Afeitado de Barba</td>
+                            <td class="border p-2">María García</td>
+                            <td class="border p-2">30 min</td>
+                            <td class="border p-2 font-bold text-green-600">$10,000</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2">2024-04-09</td>
+                            <td class="border p-2">Servicio Completo</td>
+                            <td class="border p-2">Carlos Rodríguez</td>
+                            <td class="border p-2">90 min</td>
+                            <td class="border p-2 font-bold text-green-600">$20,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Download Options -->
+        <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Opciones de Descarga</h3>
+            
+            <!-- Option 1: Direct Text File -->
+            <div class="border rounded-lg p-4">
+                <h4 class="font-semibold mb-2">Opción 1: Archivo de Texto</h4>
+                <p class="text-gray-600 mb-3">Descarga el reporte como un archivo .txt simple</p>
+                <button onclick="downloadTextFile()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-file-alt mr-2"></i>
+                    Descargar TXT
+                </button>
+            </div>
+
+            <!-- Option 2: Copy and Paste -->
+            <div class="border rounded-lg p-4">
+                <h4 class="font-semibold mb-2">Opción 2: Copiar y Pegar</h4>
+                <p class="text-gray-600 mb-3">Copia el contenido y pégalo en tu editor preferido</p>
+                <button onclick="copyContent()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-copy mr-2"></i>
+                    Copiar Contenido
+                </button>
+            </div>
+
+            <!-- Option 3: Manual Download -->
+            <div class="border rounded-lg p-4">
+                <h4 class="font-semibold mb-2">Opción 3: Descarga Manual</h4>
+                <p class="text-gray-600 mb-3">Abre el contenido en una nueva ventana y guárdalo manualmente</p>
+                <button onclick="openInNewWindow()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition">
+                    <i class="fas fa-external-link-alt mr-2"></i>
+                    Abrir en Nueva Ventana
+                </button>
+            </div>
+
+            <!-- Option 4: Print -->
+            <div class="border rounded-lg p-4">
+                <h4 class="font-semibold mb-2">Opción 4: Imprimir</h4>
+                <p class="text-gray-600 mb-3">Imprime el reporte directamente o guárdalo como PDF</p>
+                <button onclick="printReport()" class="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition">
+                    <i class="fas fa-print mr-2"></i>
+                    Imprimir
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="mt-6 p-4 rounded-lg hidden"></div>
+    </div>
+
+    <script>
+        // Get report content
+        function getReportContent() {
+            return `REPORTE DE GANANCIAS - STYLECUT PRO
+=====================================
+
+RESUMEN SEMANAL
+===============
+Ganancias Totales: $450,000
+Total de Citas: 25
+Clientes Atendidos: 18
+Tiempo Promedio: 45 min
+
+DETALLES DE CITAS
+================
+Fecha      | Servicio           | Cliente         | Duración | Ganancia
+-----------|-------------------|-----------------|----------|----------
+2024-04-08  | Corte de Cabello   | Juan Pérez      | 45 min   | $15,000
+2024-04-08  | Afeitado de Barba  | María García     | 30 min   | $10,000
+2024-04-09  | Servicio Completo | Carlos Rodríguez| 90 min   | $20,000
+
+Reporte generado: ${new Date().toLocaleDateString('es-CO')}
+Sistema: StyleCut Pro - Gestión de Barberías`;
+        }
+
+        // Download text file
+        function downloadTextFile() {
+            try {
+                const content = getReportContent();
+                const filename = 'reporte_ganancias_' + new Date().toISOString().split('T')[0] + '.txt';
+                
+                // Create a temporary link element
+                const link = document.createElement('a');
+                link.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showStatus('Archivo descargado exitosamente', 'success');
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Copy content
+        function copyContent() {
+            try {
+                const content = getReportContent();
+                
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(content).then(() => {
+                        showStatus('Contenido copiado al portapapeles', 'success');
+                    }).catch(() => {
+                        fallbackCopy(content);
+                    });
+                } else {
+                    fallbackCopy(content);
+                }
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Fallback copy method
+        function fallbackCopy(content) {
+            const textArea = document.createElement('textarea');
+            textArea.value = content;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showStatus('Contenido copiado al portapapeles', 'success');
+            } catch (err) {
+                showStatus('No se pudo copiar automáticamente. Por favor, selecciona y copia manualmente.', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Open in new window
+        function openInNewWindow() {
+            try {
+                const content = getReportContent();
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Reporte de Ganancias</title>
+                        <style>
+                            body { font-family: monospace; padding: 20px; white-space: pre; }
+                        </style>
+                    </head>
+                    <body>${content}</body>
+                    </html>
+                `);
+                newWindow.document.close();
+                showStatus('Abierto en nueva ventana. Usa Ctrl+S para guardar.', 'success');
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Print report
+        function printReport() {
+            try {
+                const content = getReportContent();
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Reporte de Ganancias</title>
+                        <style>
+                            body { font-family: monospace; padding: 20px; }
+                            @media print {
+                                body { padding: 10px; }
+                            }
+                        </style>
+                    </head>
+                    <body><pre>${content}</pre></body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+                showStatus('Ventana de impresión abierta', 'success');
+            } catch (error) {
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = 'mt-6 p-4 rounded-lg';
+            
+            if (type === 'success') {
+                statusDiv.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-300');
+            } else {
+                statusDiv.classList.add('bg-red-100', 'text-red-800', 'border', 'border-red-300');
+            }
+            
+            statusDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

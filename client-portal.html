@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Cliente - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+    <script src="data-manager.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .appointment-card {
+            transition: all 0.3s ease;
+        }
+        
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Header -->
+    <header class="glass-effect shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-spa text-3xl text-purple-600"></i>
+                    <span class="text-2xl font-bold text-gray-800">StyleCut Pro</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700">
+                        <i class="fas fa-user mr-2"></i>
+                        <span id="clientName">Cliente Demo</span>
+                    </span>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Salir
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Welcome Section -->
+        <section class="text-center text-white mb-8">
+            <h1 class="text-4xl font-bold mb-4">Bienvenido a tu Portal</h1>
+            <p class="text-xl">Gestiona tus citas y servicios de manera fácil</p>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showBookingModal()">
+                <i class="fas fa-calendar-plus text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Nueva Reserva</h3>
+                <p class="text-gray-600">Agenda un nuevo servicio</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showAppointments()">
+                <i class="fas fa-calendar-check text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Mis Citas</h3>
+                <p class="text-gray-600">Ver tus próximas citas</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showAppointmentHistory()">
+                <i class="fas fa-history text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Historial Completo</h3>
+                <p class="text-gray-600">Ver todas tus citas</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showProfile()">
+                <i class="fas fa-user-edit text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Mi Perfil</h3>
+                <p class="text-gray-600">Actualiza tus datos</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showMessages()">
+                <i class="fas fa-comments text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Mensajes</h3>
+                <p class="text-gray-600">Comunicación con tu barbero</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showBarberMap()">
+                <i class="fas fa-map-marked-alt text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Ubicación</h3>
+                <p class="text-gray-600">Ver ubicación de barberías</p>
+            </div>
+        </section>
+
+        <!-- Upcoming Appointments -->
+        <section class="glass-effect rounded-xl p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Próximas Citas</h2>
+            <div id="appointmentsList" class="space-y-4">
+                <!-- Appointments will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Available Services -->
+        <section class="glass-effect rounded-xl p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Servicios Disponibles</h2>
+            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Services will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Nueva Reserva</h3>
+                    <button onclick="closeBookingModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="bookingForm" class="space-y-6">
+                    <!-- Enhanced Booking Form with Day Dropdown -->
+                    <div class="space-y-6">
+                        <!-- Barber Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user-tie mr-2"></i>Selecciona tu barbero
+                            </label>
+                            <select id="barberSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 transition-all" required>
+                                <option value="">Elige un barbero...</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Day of Week Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-calendar-week mr-2"></i>Selecciona el día de la semana
+                            </label>
+                            <select id="dayOfWeek" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 transition-all" required>
+                                <option value="">Elige un día...</option>
+                                <option value="1">Lunes</option>
+                                <option value="2">Martes</option>
+                                <option value="3">Miércoles</option>
+                                <option value="4">Jueves</option>
+                                <option value="5">Viernes</option>
+                                <option value="6">Sábado</option>
+                                <option value="0">Domingo</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Service Selection with Duration -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-cut mr-2"></i>Selecciona el servicio y duración
+                            </label>
+                            <select id="serviceSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 transition-all" required>
+                                <option value="">Elige un servicio...</option>
+                            </select>
+                            <div id="serviceDuration" class="mt-2 text-sm text-gray-600 hidden">
+                                <i class="fas fa-clock mr-1"></i>
+                                <span id="durationText">Duración: --</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Date Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-calendar mr-2"></i>Selecciona la fecha específica
+                            </label>
+                            <input type="date" id="bookingDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 transition-all" required>
+                            <div class="mt-2 text-sm text-gray-600">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Se mostrarán solo los días disponibles según el día seleccionado
+                            </div>
+                        </div>
+                        
+                        <!-- Time Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-clock mr-2"></i>Selecciona la hora disponible
+                            </label>
+                            <div id="timeSlots" class="grid grid-cols-3 md:grid-cols-4 gap-2">
+                                <!-- Time slots will be dynamically generated -->
+                                <div class="col-span-full text-center text-gray-500 py-4">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                                    Cargando horarios...
+                                </div>
+                            </div>
+                            <div id="selectedTimeInfo" class="mt-2 text-sm text-purple-600 font-medium hidden">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                <span id="selectedTimeText">Hora seleccionada: --</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Availability Status -->
+                        <div id="availabilityStatus" class="hidden">
+                            <div class="p-3 rounded-lg">
+                                <div id="availabilityMessage" class="text-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                        Confirmar Reserva
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barber Map Modal -->
+    <div id="barberMapModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Ubicación de Barberías</h3>
+                    <button onclick="closeBarberMapModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Map Container -->
+                <div id="barberMapContainer" class="h-96 bg-gray-200 rounded-lg mb-6">
+                    <!-- Map will be loaded here -->
+                </div>
+                
+                <!-- Barber List -->
+                <div id="barberListContainer" class="space-y-4">
+                    <!-- Barber list will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Messages Modal -->
+    <div id="messagesModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Mensajes con tu Barbero</h3>
+                    <button onclick="closeMessagesModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Messages List -->
+                <div id="messagesList" class="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                    <!-- Messages will be loaded here -->
+                </div>
+                
+                <!-- Send Message Form -->
+                <form id="sendMessageForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Enviar mensaje</label>
+                        <textarea id="newMessage" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                        <i class="fas fa-paper-plane mr-2"></i>Enviar Mensaje
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Appointment History Modal -->
+    <div id="appointmentHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Historial Completo de Citas</h3>
+                    <button onclick="closeAppointmentHistoryModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-4 flex space-x-2">
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg" id="historyFilter">
+                        <option value="all">Todas las citas</option>
+                        <option value="completed">Completadas</option>
+                        <option value="cancelled">Canceladas</option>
+                        <option value="pending">Pendientes</option>
+                    </select>
+                    <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg" id="historyDateFilter">
+                </div>
+                
+                <div id="appointmentHistoryList" class="space-y-4">
+                    <!-- Appointment history will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Mi Perfil</h3>
+                <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Profile Photo -->
+            <div class="text-center mb-6">
+                <div class="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center overflow-hidden">
+                    <img id="profilePhotoPreview" src="" alt="Foto de perfil" class="w-full h-full object-cover hidden">
+                    <i class="fas fa-user text-4xl text-gray-400" id="profilePhotoPlaceholder"></i>
+                </div>
+                <input type="file" id="profilePhoto" accept="image/*" class="hidden">
+                <button type="button" onclick="document.getElementById('profilePhoto').click()" class="bg-purple-100 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+                    <i class="fas fa-camera mr-2"></i>Subir Foto
+                </button>
+            </div>
+            
+            <form id="profileForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre completo</label>
+                    <input type="text" id="profileName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" value="Cliente Demo">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="profileEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" value="demo@client.com">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                    <input type="tel" id="profilePhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" value="3001234567">
+                </div>
+                
+                <!-- WhatsApp Notifications -->
+                <div class="border-t pt-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="whatsappNotifications" class="mr-2" checked>
+                        <span class="text-sm font-medium text-gray-700">Recibir notificaciones de confirmación por WhatsApp</span>
+                    </label>
+                    <p class="text-xs text-gray-500 mt-1">Recibirás mensajes con la ubicación y hora de tus citas</p>
+                </div>
+                
+                <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                    Actualizar Perfil
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="client-portal.js"></script>
+</body>
+</html>

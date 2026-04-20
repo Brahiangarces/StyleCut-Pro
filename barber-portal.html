@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="portalTitle">Portal de Barbería | BarberHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .brand-purple {
+            background-color: #6B46C1;
+        }
+        .brand-purple:hover {
+            background-color: #5B3FA0;
+        }
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .custom-branding {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header with Barber Branding -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div id="barberLogo" class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-cut text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 id="barberShopName" class="text-xl font-bold text-gray-900">La Barbería de Carlos</h1>
+                        <p id="barberSlogan" class="text-sm text-gray-600">La mejor decisión para tu estilo</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <button onclick="showSection('services')" class="text-gray-700 hover:text-purple-600 transition font-medium">Servicios</button>
+                    <button onclick="showSection('about')" class="text-gray-700 hover:text-purple-600 transition font-medium">Nosotros</button>
+                    <button onclick="showSection('gallery')" class="text-gray-700 hover:text-purple-600 transition font-medium">Galería</button>
+                    <button onclick="showSection('contact')" class="text-gray-700 hover:text-purple-600 transition font-medium">Contacto</button>
+                    <button onclick="showBookingModal()" class="brand-purple text-white px-4 py-2 rounded-lg hover:shadow-lg transition">
+                        <i class="fas fa-calendar-plus mr-2"></i>Reservar
+                    </button>
+                </nav>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-gray-700">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-4 space-y-3">
+                <button onclick="showSection('services')" class="block w-full text-left text-gray-700 hover:text-purple-600">Servicios</button>
+                <button onclick="showSection('about')" class="block w-full text-left text-gray-700 hover:text-purple-600">Nosotros</button>
+                <button onclick="showSection('gallery')" class="block w-full text-left text-gray-700 hover:text-purple-600">Galería</button>
+                <button onclick="showSection('contact')" class="block w-full text-left text-gray-700 hover:text-purple-600">Contacto</button>
+                <button onclick="showBookingModal()" class="block w-full text-left brand-purple text-white px-4 py-2 rounded-lg">Reservar</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Custom Branding -->
+    <section class="relative h-96 bg-gradient-to-r from-purple-600 to-purple-800 text-white">
+        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+        <img id="heroImage" src="https://images.unsplash.com/photo-1585747860718-85af9b5edf34?w=1200&h=600&fit=crop" alt="Barbería" class="absolute inset-0 w-full h-full object-cover">
+        <div class="relative container mx-auto px-4 h-full flex items-center">
+            <div class="max-w-2xl">
+                <h1 id="heroTitle" class="text-4xl md:text-5xl font-bold mb-4">La Barbería de Carlos</h1>
+                <p id="heroDescription" class="text-xl text-purple-100 mb-6">Con más de 10 años de experiencia, especializado en cortes modernos y técnicas tradicionales de afeitado.</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="showBookingModal()" class="brand-purple text-white px-8 py-3 rounded-lg hover:shadow-lg transition">
+                        <i class="fas fa-calendar-plus mr-2"></i>Reservar Cita
+                    </button>
+                    <button onclick="showSection('services')" class="bg-white/20 backdrop-blur text-white px-8 py-3 rounded-lg hover:bg-white/30 transition">
+                        <i class="fas fa-list mr-2"></i>Ver Servicios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicesSection" class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestros Servicios</h2>
+                <p class="text-xl text-gray-600">Servicios profesionales de alta calidad</p>
+            </div>
+            
+            <div id="servicesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Services will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="aboutSection" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Sobre Nosotros</h2>
+                    <p id="aboutDescription" class="text-lg text-gray-600 mb-6">
+                        Con más de 10 años de experiencia, especializado en cortes modernos y técnicas tradicionales de afeitado. Usamos productos de alta calidad para garantizar el mejor resultado.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-award text-purple-600 text-2xl"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Experiencia Certificada</h3>
+                                <p class="text-gray-600">Más de 10 años en el mercado</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-users text-purple-600 text-2xl"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Clientes Satisfechos</h3>
+                                <p class="text-gray-600">Más de 1000 clientes felices</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-star text-purple-600 text-2xl"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">Excelente Rating</h3>
+                                <p class="text-gray-600">4.9/5 estrellas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <img id="aboutImage" src="https://images.unsplash.com/photo-1585747860718-85af9b5edf34?w=600&h=400&fit=crop" alt="Sobre nosotros" class="rounded-lg shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallerySection" class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Galería de Trabajos</h2>
+                <p class="text-xl text-gray-600">Mira nuestros mejores trabajos</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <img src="https://images.unsplash.com/photo-1560069002-3d4b1c4016f2?w=300&h=300&fit=crop" alt="Trabajo 1" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1585747860718-85af9b5edf34?w=300&h=300&fit=crop" alt="Trabajo 2" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1595476138255-5848e5c882f2?w=300&h=300&fit=crop" alt="Trabajo 3" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1503951914875-4022594c2d5b?w=300&h=300&fit=crop" alt="Trabajo 4" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1585747860718-85af9b5edf34?w=300&h=300&fit=crop" alt="Trabajo 5" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1560069002-3d4b1c4016f2?w=300&h=300&fit=crop" alt="Trabajo 6" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1595476138255-5848e5c882f2?w=300&h=300&fit=crop" alt="Trabajo 7" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1503951914875-4022594c2d5b?w=300&h=300&fit=crop" alt="Trabajo 8" class="rounded-lg shadow-md hover:shadow-xl transition cursor-pointer">
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contactSection" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contáctanos</h2>
+                <p class="text-xl text-gray-600">Estamos aquí para atenderte</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <i class="fas fa-map-marker-alt text-purple-600 text-3xl mb-4"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Dirección</h3>
+                    <p id="contactAddress" class="text-gray-600">Cra. 44 #64 B Sur 15, Sabaneta, Antioquia</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-phone text-purple-600 text-3xl mb-4"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Teléfono</h3>
+                    <p id="contactPhone" class="text-gray-600">300 123 4567</p>
+                </div>
+                <div class="text-center">
+                    <i class="fas fa-clock text-purple-600 text-3xl mb-4"></i>
+                    <h3 class="font-semibold text-gray-900 mb-2">Horario</h3>
+                    <p id="contactHours" class="text-gray-600">Lun-Sáb: 9:00 AM - 8:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Síguenos en Redes Sociales</h3>
+                <div class="flex justify-center space-x-4">
+                    <a id="instagramLink" href="#" class="bg-pink-100 text-pink-600 p-3 rounded-full hover:bg-pink-200 transition">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    <a id="facebookLink" href="#" class="bg-blue-100 text-blue-600 p-3 rounded-full hover:bg-blue-200 transition">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </a>
+                    <a id="whatsappLink" href="#" class="bg-green-100 text-green-600 p-3 rounded-full hover:bg-green-200 transition">
+                        <i class="fab fa-whatsapp text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Reservar Cita</h3>
+                <button onclick="closeBookingModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="bookingForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre completo</label>
+                    <input type="text" id="clientName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                    <input type="tel" id="clientPhone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Servicio</label>
+                    <select id="selectedService" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                        <!-- Services will be loaded here -->
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Fecha</label>
+                    <input type="date" id="bookingDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Hora</label>
+                    <select id="bookingTime" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                        <option value="">Seleccionar hora</option>
+                        <option value="09:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="12:00">12:00 PM</option>
+                        <option value="14:00">2:00 PM</option>
+                        <option value="15:00">3:00 PM</option>
+                        <option value="16:00">4:00 PM</option>
+                        <option value="17:00">5:00 PM</option>
+                        <option value="18:00">6:00 PM</option>
+                        <option value="19:00">7:00 PM</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full brand-purple text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                    <i class="fas fa-calendar-check mr-2"></i>Confirmar Reserva
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client Login Modal -->
+    <div id="clientLoginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Portal de Clientes</h3>
+                <button onclick="closeClientLoginModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="clientLoginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="clientEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="clientPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <button type="submit" class="w-full brand-purple text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Ingresar
+                </button>
+                
+                <div class="text-center">
+                    <a href="#" onclick="showClientRegistrationModal()" class="text-purple-600 hover:underline text-sm">
+                        ¿No tienes cuenta? Regístrate aquí
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client Registration Modal -->
+    <div id="clientRegistrationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Registrarse como Cliente</h3>
+                <button onclick="closeClientRegistrationModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="clientRegistrationForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre completo</label>
+                    <input type="text" id="regClientName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="regClientEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                    <input type="tel" id="regClientPhone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="regClientPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Notas (opcional)</label>
+                    <textarea id="regClientNotes" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Preferencias, alergias, tipo de cabello..."></textarea>
+                </div>
+                
+                <button type="submit" class="w-full brand-purple text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                    <i class="fas fa-user-plus mr-2"></i>Registrarse
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div id="footerLogo" class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-cut text-purple-600 text-sm"></i>
+                        </div>
+                        <span id="footerShopName" class="text-xl font-bold">La Barbería de Carlos</span>
+                    </div>
+                    <p id="footerDescription" class="text-gray-400">La mejor barbería de Sabaneta con más de 10 años de experiencia.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Enlaces Rápidos</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" onclick="showSection('services')" class="hover:text-white transition">Servicios</a></li>
+                        <li><a href="#" onclick="showSection('about')" class="hover:text-white transition">Nosotros</a></li>
+                        <li><a href="#" onclick="showSection('gallery')" class="hover:text-white transition">Galería</a></li>
+                        <li><a href="#" onclick="showClientLoginModal()" class="hover:text-white transition">Portal Clientes</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contacto</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-phone mr-2"></i><span id="footerPhone">300 123 4567</span></li>
+                        <li><i class="fas fa-envelope mr-2"></i><span id="footerEmail">carlos@barberhub.co</span></li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i><span id="footerAddress">Sabaneta, Antioquia</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 <span id="footerCopyright">La Barbería de Carlos</span>. Todos los derechos reservados.</p>
+                <p class="mt-2 text-sm">Desarrollado por BarberHub</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="barber-portal.js"></script>
+</body>
+</html>

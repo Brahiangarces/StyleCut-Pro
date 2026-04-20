@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Fixed - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">StyleCut Pro</h1>
+            <p class="text-gray-600">Login con CORS Fix</p>
+        </div>
+
+        <div id="apiStatus" class="mb-4 p-3 rounded-lg text-sm"></div>
+
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input type="email" id="email" value="admin1@stylecut.com" required
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                <input type="password" id="password" value="admin123" required
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent">
+            </div>
+
+            <button type="submit" id="loginBtn"
+                    class="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-blue-700 transition duration-200">
+                Iniciar Sesión
+            </button>
+        </form>
+
+        <div id="result" class="mt-6 p-4 rounded-lg hidden"></div>
+
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">Servidor backend con CORS abierto completamente</p>
+            <div class="mt-2 text-xs space-y-1">
+                <div><strong>Admin:</strong> admin1@stylecut.com / admin123</div>
+                <div><strong>Backend:</strong> http://localhost:3001</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check API status
+        async function checkAPI() {
+            const statusDiv = document.getElementById('apiStatus');
+            try {
+                const response = await fetch('http://localhost:3001/api/health');
+                const data = await response.json();
+                statusDiv.innerHTML = `
+                    <div class="bg-green-100 text-green-800">
+                        <i class="fas fa-check-circle"></i> API Fixed Conectada
+                        <br><small>CORS: ${data.cors}</small>
+                        <br><small>Database: ${data.database}</small>
+                    </div>
+                `;
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="bg-red-100 text-red-800">
+                        <i class="fas fa-times-circle"></i> API No Disponible
+                        <br><small>${error.message}</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Login function with multiple fallbacks
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Show loading
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando...';
+            loginBtn.disabled = true;
+            resultDiv.classList.add('hidden');
+            
+            try {
+                console.log('Intentando login con:', email);
+                
+                // Try with different configurations
+                const configs = [
+                    // Standard fetch
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password }),
+                        mode: 'cors'
+                    },
+                    // With no-cors
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password }),
+                        mode: 'no-cors'
+                    },
+                    // Minimal headers
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({ email, password })
+                    }
+                ];
+                
+                let response = null;
+                let data = null;
+                
+                // Try each configuration
+                for (let i = 0; i < configs.length; i++) {
+                    try {
+                        console.log(`Intentando configuración ${i + 1}:`, configs[i]);
+                        
+                        response = await fetch('http://localhost:3001/api/auth/login', configs[i]);
+                        
+                        if (configs[i].mode === 'no-cors') {
+                            // no-cors mode doesn't give us the response body
+                            console.log('Respuesta no-cors recibida');
+                            continue;
+                        }
+                        
+                        data = await response.json();
+                        console.log('Respuesta recibida:', data);
+                        
+                        if (response.ok) {
+                            break; // Success, exit loop
+                        }
+                    } catch (configError) {
+                        console.log(`Configuración ${i + 1} falló:`, configError);
+                        continue; // Try next configuration
+                    }
+                }
+                
+                if (response && response.ok && data) {
+                    // Success
+                    resultDiv.innerHTML = `
+                        <div class="bg-green-100 text-green-800">
+                            <i class="fas fa-check-circle"></i> <strong>Login Exitoso!</strong>
+                            <br><span class="text-sm">Rol: ${data.user.role}</span>
+                            <br><span class="text-sm">Nombre: ${data.user.name}</span>
+                            <br><span class="text-sm">Redirigiendo...</span>
+                        </div>
+                    `;
+                    resultDiv.classList.remove('hidden');
+                    
+                    // Store session
+                    sessionStorage.setItem('userRole', data.user.role);
+                    sessionStorage.setItem('userEmail', data.user.email);
+                    sessionStorage.setItem('userData', JSON.stringify(data.user));
+                    localStorage.setItem('stylecut_token', data.token);
+                    
+                    // Redirect
+                    setTimeout(() => {
+                        switch(data.user.role) {
+                            case 'admin':
+                                window.location.href = 'admin-dashboard.html';
+                                break;
+                            case 'barber':
+                                window.location.href = 'barber-dashboard.html';
+                                break;
+                            case 'client':
+                                window.location.href = 'client-portal.html';
+                                break;
+                        }
+                    }, 1500);
+                    
+                } else {
+                    throw new Error(data?.error || 'No se pudo conectar con el servidor');
+                }
+                
+            } catch (error) {
+                console.error('Error completo:', error);
+                resultDiv.innerHTML = `
+                    <div class="bg-red-100 text-red-800">
+                        <i class="fas fa-times-circle"></i> <strong>Error de Login</strong>
+                        <br><span class="text-sm">${error.message}</span>
+                        <br><small>Intenta recargar la página y verificar que el backend esté corriendo</small>
+                        <br><small>Backend debe estar en: http://localhost:3001</small>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+                
+                // Reset button
+                loginBtn.innerHTML = 'Iniciar Sesión';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Check API on load
+        checkAPI();
+        
+        // Check API every 3 seconds
+        setInterval(checkAPI, 3000);
+    </script>
+</body>
+</html>

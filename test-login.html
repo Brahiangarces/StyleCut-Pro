@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center">Test Login API</h2>
+        
+        <div id="status" class="mb-4 p-3 rounded bg-gray-200 text-gray-700 text-sm"></div>
+        
+        <form id="testForm">
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Email:</label>
+                <input type="email" id="testEmail" value="admin1@stylecut.com" 
+                       class="w-full p-2 border rounded" required>
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Password:</label>
+                <input type="password" id="testPassword" value="admin123" 
+                       class="w-full p-2 border rounded" required>
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+                Test Login
+            </button>
+        </form>
+        
+        <div id="result" class="mt-4 p-3 rounded hidden"></div>
+    </div>
+
+    <script>
+        // Check API health
+        async function checkHealth() {
+            try {
+                const response = await fetch('http://localhost:3001/api/health');
+                const data = await response.json();
+                document.getElementById('status').innerHTML = 
+                    `API Status: <span class="text-green-600 font-bold">OK</span><br>
+                    Database: ${data.database}<br>
+                    Uptime: ${data.uptime}s`;
+            } catch (error) {
+                document.getElementById('status').innerHTML = 
+                    `API Status: <span class="text-red-600 font-bold">ERROR</span><br>
+                    ${error.message}`;
+            }
+        }
+
+        // Test login
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.classList.remove('hidden');
+            resultDiv.innerHTML = '<div class="text-blue-600">Probando login...</div>';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="text-green-600 font-bold">Login Exitoso!</div>
+                        <div class="mt-2 text-sm">
+                            <div>Rol: <span class="font-bold">${data.user.role}</span></div>
+                            <div>Nombre: <span class="font-bold">${data.user.name}</span></div>
+                            <div>Email: <span class="font-bold">${data.user.email}</span></div>
+                            <div>Token: <span class="text-xs">${data.token.substring(0, 50)}...</span></div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="text-red-600 font-bold">Error de Login</div>
+                        <div class="mt-2 text-sm">${data.error}</div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="text-red-600 font-bold">Error de Conexión</div>
+                    <div class="mt-2 text-sm">${error.message}</div>
+                `;
+            }
+        });
+
+        // Check health on load
+        checkHealth();
+    </script>
+</body>
+</html>

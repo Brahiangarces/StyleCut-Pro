@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Enviado | BarberHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .brand-purple {
+            background-color: #6B46C1;
+        }
+        .brand-purple:hover {
+            background-color: #5B3FA0;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-2xl w-full">
+        <div class="bg-white rounded-2xl shadow-xl p-8 text-center fade-in">
+            <!-- Success Icon -->
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-green-600 text-3xl"></i>
+            </div>
+            
+            <!-- Success Message -->
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">¡Registro Enviado Exitosamente!</h1>
+            <p class="text-lg text-gray-600 mb-8">
+                Tu solicitud de registro de barbería ha sido recibida y está siendo revisada por nuestro equipo administrativo.
+            </p>
+            
+            <!-- Next Steps -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-8 text-left">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">¿Qué sigue?</h2>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-purple-600 font-semibold text-sm">1</span>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Revisión Administrativa</h3>
+                            <p class="text-gray-600 text-sm">Nuestro equipo revisará tu información en las próximas 24-48 horas.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-purple-600 font-semibold text-sm">2</span>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Notificación por Email</h3>
+                            <p class="text-gray-600 text-sm">Recibirás un email con el estado de tu solicitud (aprobada/rechazada).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <span class="text-purple-600 font-semibold text-sm">3</span>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Portal Activo</h3>
+                            <p class="text-gray-600 text-sm">Si es aprobada, tu portal de barbería estará activo inmediatamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="bg-purple-50 rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">¿Tienes Preguntas?</h2>
+                <div class="space-y-2 text-gray-600">
+                    <p><i class="fas fa-envelope mr-2"></i>soporte@barberhub.co</p>
+                    <p><i class="fas fa-phone mr-2"></i>300 123 4567</p>
+                    <p><i class="fas fa-clock mr-2"></i>Lun-Vie: 9:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <button onclick="window.location.href='barber-directory.html'" class="flex-1 brand-purple text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition">
+                    <i class="fas fa-store mr-2"></i>Ver Directorio
+                </button>
+                <button onclick="window.location.href='index.html'" class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition">
+                    <i class="fas fa-home mr-2"></i>Página Principal
+                </button>
+            </div>
+        </div>
+        
+        <!-- Additional Info -->
+        <div class="mt-8 text-center text-gray-500 text-sm">
+            <p>Número de referencia: #${Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
+            <p class="mt-2">Guarda este número para seguimiento de tu solicitud.</p>
+        </div>
+    </div>
+</body>
+</html>

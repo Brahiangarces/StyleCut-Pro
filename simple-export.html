@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exportar Reporte - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">
+            <i class="fas fa-file-export mr-3"></i>
+            Exportar Reporte de Ganancias
+        </h1>
+
+        <!-- Report Content -->
+        <div id="reportContent" class="mb-8">
+            <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                <h2 class="text-xl font-semibold text-blue-800 mb-4">Resumen Semanal</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-gray-600">Ganancias Totales:</span>
+                        <span class="font-bold text-green-600 ml-2">$450,000</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Total de Citas:</span>
+                        <span class="font-bold text-blue-600 ml-2">25</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Clientes Atendidos:</span>
+                        <span class="font-bold text-purple-600 ml-2">18</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Tiempo Promedio:</span>
+                        <span class="font-bold text-orange-600 ml-2">45 min</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Detalles de Citas</h2>
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border p-2 text-left">Fecha</th>
+                            <th class="border p-2 text-left">Servicio</th>
+                            <th class="border p-2 text-left">Cliente</th>
+                            <th class="border p-2 text-left">Duración</th>
+                            <th class="border p-2 text-left">Ganancia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border p-2">2024-04-08</td>
+                            <td class="border p-2">Corte de Cabello</td>
+                            <td class="border p-2">Juan Pérez</td>
+                            <td class="border p-2">45 min</td>
+                            <td class="border p-2 font-bold text-green-600">$15,000</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2">2024-04-08</td>
+                            <td class="border p-2">Afeitado de Barba</td>
+                            <td class="border p-2">María García</td>
+                            <td class="border p-2">30 min</td>
+                            <td class="border p-2 font-bold text-green-600">$10,000</td>
+                        </tr>
+                        <tr>
+                            <td class="border p-2">2024-04-09</td>
+                            <td class="border p-2">Servicio Completo</td>
+                            <td class="border p-2">Carlos Rodríguez</td>
+                            <td class="border p-2">90 min</td>
+                            <td class="border p-2 font-bold text-green-600">$20,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="flex space-x-4">
+            <button onclick="exportAsText()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                <i class="fas fa-file-alt mr-2"></i>
+                Exportar como Texto
+            </button>
+            <button onclick="copyToClipboard()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
+                <i class="fas fa-copy mr-2"></i>
+                Copiar al Portapapeles
+            </button>
+            <button onclick="printReport()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition">
+                <i class="fas fa-print mr-2"></i>
+                Imprimir
+            </button>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="mt-4 p-4 rounded-lg hidden"></div>
+    </div>
+
+    <script>
+        // Export as text file
+        function exportAsText() {
+            try {
+                const content = document.getElementById('reportContent').innerText;
+                
+                // Method 1: Try modern download approach
+                if ('download' in document.createElement('a')) {
+                    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'reporte_ganancias_stylecut.txt';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                    showStatus('Reporte exportado exitosamente', 'success');
+                } else {
+                    // Method 2: Fallback for older browsers
+                    window.open('data:text/plain;charset=utf-8,' + encodeURIComponent(content), '_blank');
+                    showStatus('Archivo abierto en nueva ventana. Guarda con Ctrl+S', 'success');
+                }
+            } catch (error) {
+                showStatus('Error al exportar: ' + error.message, 'error');
+                // Method 3: Last resort - show content in modal
+                showContentInModal(content);
+            }
+        }
+
+        // Show content in modal as last resort
+        function showContentInModal(content) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 20px; max-width: 80%; max-height: 80%; overflow: auto; border-radius: 8px;">
+                    <h3 style="margin-bottom: 15px;">Contenido del Reporte</h3>
+                    <textarea style="width: 100%; height: 400px; font-family: monospace; padding: 10px; border: 1px solid #ccc;">${content}</textarea>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button onclick="this.closest('div').parentElement.remove()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Cerrar</button>
+                    </div>
+                    <p style="margin-top: 10px; color: #666; font-size: 14px;">Selecciona todo el texto (Ctrl+A) y cópialo (Ctrl+C) para pegarlo en un editor de texto.</p>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            showStatus('Contenido mostrado. Copia y pega en un editor de texto.', 'info');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            try {
+                const content = document.getElementById('reportContent').innerText;
+                navigator.clipboard.writeText(content).then(() => {
+                    showStatus('Reporte copiado al portapapeles', 'success');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = content;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showStatus('Reporte copiado al portapapeles', 'success');
+                });
+            } catch (error) {
+                showStatus('Error al copiar: ' + error.message, 'error');
+            }
+        }
+
+        // Print report
+        function printReport() {
+            try {
+                window.print();
+                showStatus('Ventana de impresión abierta', 'success');
+            } catch (error) {
+                showStatus('Error al imprimir: ' + error.message, 'error');
+            }
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = 'mt-4 p-4 rounded-lg';
+            
+            if (type === 'success') {
+                statusDiv.classList.add('bg-green-100', 'text-green-800', 'border', 'border-green-300');
+            } else if (type === 'error') {
+                statusDiv.classList.add('bg-red-100', 'text-red-800', 'border', 'border-red-300');
+            } else if (type === 'info') {
+                statusDiv.classList.add('bg-blue-100', 'text-blue-800', 'border', 'border-blue-300');
+            }
+            
+            statusDiv.classList.remove('hidden');
+            
+            // Hide after 5 seconds for info messages, 3 seconds for others
+            const timeout = type === 'info' ? 5000 : 3000;
+            setTimeout(() => {
+                statusDiv.classList.add('hidden');
+            }, timeout);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de exportación cargada');
+        });
+    </script>
+</body>
+</html>

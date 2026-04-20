@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+    <script src="data-manager.js"></script>
+    <script src="admin-dashboard.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-item {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .sidebar-item.active {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 glass-effect shadow-lg">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-8">
+                    <i class="fas fa-spa text-3xl text-purple-600"></i>
+                    <span class="text-2xl font-bold text-gray-800">StyleCut Pro</span>
+                </div>
+                
+                <nav class="space-y-2">
+                    <div class="sidebar-item active p-3 rounded-lg cursor-pointer" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt mr-3 text-purple-600"></i>
+                        <span class="font-medium">Dashboard</span>
+                    </div>
+                    
+                    <div class="sidebar-item p-3 rounded-lg cursor-pointer" onclick="showSection('users')">
+                        <i class="fas fa-users mr-3 text-purple-600"></i>
+                        <span class="font-medium">Usuarios</span>
+                    </div>
+                    
+                    <div class="sidebar-item p-3 rounded-lg cursor-pointer" onclick="showSection('barbers')">
+                        <i class="fas fa-user-tie mr-3 text-purple-600"></i>
+                        <span class="font-medium">Barberos</span>
+                    </div>
+                    
+                    <div class="sidebar-item p-3 rounded-lg cursor-pointer" onclick="showSection('services')">
+                        <i class="fas fa-cut mr-3 text-purple-600"></i>
+                        <span class="font-medium">Servicios</span>
+                    </div>
+                    
+                    <div class="sidebar-item p-3 rounded-lg cursor-pointer" onclick="showSection('appointments')">
+                        <i class="fas fa-calendar mr-3 text-purple-600"></i>
+                        <span class="font-medium">Citas</span>
+                    </div>
+                    
+                    <div class="sidebar-item p-3 rounded-lg cursor-pointer" onclick="showSection('reports')">
+                        <i class="fas fa-chart-bar mr-3 text-purple-600"></i>
+                        <span class="font-medium">Reportes</span>
+                    </div>
+                    
+                    <div class="sidebar-item p-3 rounded-lg cursor-pointer" onclick="showSection('settings')">
+                        <i class="fas fa-cog mr-3 text-purple-600"></i>
+                        <span class="font-medium">Configuración</span>
+                    </div>
+                </nav>
+            </div>
+            
+            <div class="absolute bottom-0 w-64 p-6 border-t border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fas fa-crown text-2xl text-purple-600 mr-3"></i>
+                        <div>
+                            <p class="font-semibold text-gray-800">Administrador</p>
+                            <p class="text-sm text-gray-600">admin@beunik.co</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="glass-effect shadow-lg sticky top-0 z-50">
+                <div class="px-6 py-4 flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-gray-800" id="pageTitle">Panel de Administración</h1>
+                    <div class="flex items-center space-x-4">
+                        <button class="relative">
+                            <i class="fas fa-bell text-xl text-gray-600 hover:text-purple-600"></i>
+                            <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </button>
+                        <span class="text-gray-700">
+                            <i class="far fa-clock mr-2"></i>
+                            <span id="currentTime"></span>
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-6">
+                <!-- Dashboard Section -->
+                <section id="dashboardSection" class="space-y-6">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass-effect rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <i class="fas fa-users text-3xl text-blue-600"></i>
+                                <span class="text-sm text-green-600 font-semibold">+12%</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">1,234</h3>
+                            <p class="text-gray-600">Clientes Totales</p>
+                        </div>
+                        
+                        <div class="glass-effect rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <i class="fas fa-user-tie text-3xl text-purple-600"></i>
+                                <span class="text-sm text-green-600 font-semibold">+2</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">8</h3>
+                            <p class="text-gray-600">Barberos Activos</p>
+                        </div>
+                        
+                        <div class="glass-effect rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <i class="fas fa-calendar-check text-3xl text-green-600"></i>
+                                <span class="text-sm text-green-600 font-semibold">+25%</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">456</h3>
+                            <p class="text-gray-600">Citas este Mes</p>
+                        </div>
+                        
+                        <div class="glass-effect rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <i class="fas fa-dollar-sign text-3xl text-yellow-600"></i>
+                                <span class="text-sm text-green-600 font-semibold">+18%</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">$12.5M</h3>
+                            <p class="text-gray-600">Ingresos Mensuales</p>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-effect rounded-xl p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Tendencia de Citas</h3>
+                            <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                                <canvas id="appointmentsChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-effect rounded-xl p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Servicios Más Populares</h3>
+                            <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                                <canvas id="servicesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="glass-effect rounded-xl p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Actividad Reciente</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-plus text-blue-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-semibold">Nueva cita agendada</p>
+                                        <p class="text-sm text-gray-600">Juan Pérez - Masaje Relajante</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm text-gray-500">Hace 5 min</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-plus text-green-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-semibold">Nuevo cliente registrado</p>
+                                        <p class="text-sm text-gray-600">María García - maria@email.com</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm text-gray-500">Hace 15 min</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-dollar-sign text-yellow-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-semibold">Pago procesado</p>
+                                        <p class="text-sm text-gray-600">$80.000 - Carlos López</p>
+                                    </div>
+                                </div>
+                                <span class="text-sm text-gray-500">Hace 30 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Users Section -->
+                <section id="usersSection" class="hidden">
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
+                            <button onclick="addNewUser()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-plus mr-2"></i>Nuevo Usuario
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-3 px-4">ID</th>
+                                        <th class="text-left py-3 px-4">Nombre</th>
+                                        <th class="text-left py-3 px-4">Email</th>
+                                        <th class="text-left py-3 px-4">Teléfono</th>
+                                        <th class="text-left py-3 px-4">Rol</th>
+                                        <th class="text-left py-3 px-4">Estado</th>
+                                        <th class="text-left py-3 px-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-sm font-medium text-gray-900">#001</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">Juan Pérez</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">juan.perez@email.com</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">3001234567</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Cliente</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal(this, 'user', '001')" class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="changeUserRole('001')" class="text-orange-600 hover:text-orange-800">
+                                                    <i class="fas fa-user-cog"></i>
+                                                </button>
+                                                <button onclick="deleteUser('001')" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-sm font-medium text-gray-900">#002</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">Carlos Rodríguez</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">carlos@stylecut.com</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">3009876543</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Barbero</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal(this, 'user', '002')" class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="changeUserRole('002')" class="text-orange-600 hover:text-orange-800">
+                                                    <i class="fas fa-user-cog"></i>
+                                                </button>
+                                                <button onclick="deleteUser('002')" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-sm font-medium text-gray-900">#003</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">María García</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">maria.garcia@email.com</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">3005551234</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Cliente</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal(this, 'user', '003')" class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="changeUserRole('003')" class="text-orange-600 hover:text-orange-800">
+                                                    <i class="fas fa-user-cog"></i>
+                                                </button>
+                                                <button onclick="deleteUser('003')" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-sm font-medium text-gray-900">#004</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">Admin Principal</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">admin1@stylecut.com</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">3001112222</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Administrador</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal(this, 'user', '004')" class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="changeUserRole('004')" class="text-orange-600 hover:text-orange-800">
+                                                    <i class="fas fa-user-cog"></i>
+                                                </button>
+                                                <button onclick="deleteUser('004')" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Barbers Section -->
+                <section id="barbersSection" class="hidden">
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">Gestión de Barberos</h2>
+                            <button onclick="showCreateBarberModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-user-plus mr-2"></i>Registrar Nuevo Barbero
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200">
+                                        <th class="text-left py-3 px-4">ID</th>
+                                        <th class="text-left py-3 px-4">Nombre</th>
+                                        <th class="text-left py-3 px-4">Email</th>
+                                        <th class="text-left py-3 px-4">Teléfono</th>
+                                        <th class="text-left py-3 px-4">Especialidad</th>
+                                        <th class="text-left py-3 px-4">Estado</th>
+                                        <th class="text-left py-3 px-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="barbersTableBody">
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-sm font-medium text-gray-900">#B001</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">Carlos Rodríguez</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">carlos@stylecut.com</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">3009876543</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Corte de Cabello</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal(this, 'barber', 'B001')" class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="deleteBarber('B001')" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-sm font-medium text-gray-900">#B002</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">Juan Martínez</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">juan@stylecut.com</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">3005559876</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Afeitado de Barba</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal(this, 'barber', 'B002')" class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="deleteBarber('B002')" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-sm font-medium text-gray-900">#B003</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">Miguel Ángel</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">miguel@stylecut.com</td>
+                                        <td class="py-3 px-4 text-sm text-gray-700">3002223333</td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Todos los Servicios</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Activo</span>
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal(this, 'barber', 'B003')" class="text-blue-600 hover:text-blue-800">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="deleteBarber('B003')" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Other sections will be similar... -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Barber Modal -->
+    <div id="createBarberModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Crear Nuevo Usuario</h3>
+                    <button onclick="closeCreateBarberModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="createBarberForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nombre completo</label>
+                            <input type="text" id="barberName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="barberEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                            <input type="tel" id="barberPhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Rol</label>
+                            <select id="userRole" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                                <option value="">Selecciona rol...</option>
+                                <option value="client">Cliente</option>
+                                <option value="barber">Barbero</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                        
+                        <div id="barberSpecialtyField">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Especialidad</label>
+                            <select id="barberSpecialty" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                <option value="">Selecciona especialidad...</option>
+                                <option value="corte">Corte de Cabello</option>
+                                <option value="barba">Afeitado de Barba</option>
+                                <option value="completo">Servicio Completo</option>
+                                <option value="todos">Todos los Servicios</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                        <input type="password" id="barberPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required minlength="6">
+                        <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña</label>
+                        <input type="password" id="barberConfirmPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required minlength="6">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notas adicionales</label>
+                        <textarea id="barberNotes" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Experiencia, certificaciones, etc..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                        <i class="fas fa-user-plus mr-2"></i>Registrar Barbero
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Editar Usuario</h3>
+                <button onclick="closeEditUserModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="editUserForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre completo</label>
+                    <input type="text" id="editUserName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="editUserEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                    <input type="tel" id="editUserPhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                    <i class="fas fa-save mr-2"></i>Guardar Cambios
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Role Modal -->
+    <div id="changeRoleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Cambiar Rol de Usuario</h3>
+                <button onclick="closeChangeRoleModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="changeRoleForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <input type="text" id="roleUserName" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="roleUserEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rol Actual</label>
+                    <input type="text" id="currentRole" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nuevo Rol</label>
+                    <select id="newRole" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" required>
+                        <option value="">Selecciona nuevo rol...</option>
+                        <option value="client">Cliente</option>
+                        <option value="barber">Barbero</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p class="text-sm text-yellow-800">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Cambiar el rol afectará los permisos y accesos del usuario.
+                    </p>
+                </div>
+                
+                <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 transition">
+                    <i class="fas fa-user-cog mr-2"></i>Cambiar Rol
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

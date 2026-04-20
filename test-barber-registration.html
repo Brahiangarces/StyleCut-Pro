@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Barber Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-4">Test Registro de Barbero</h2>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
+            <input type="text" id="testName" class="w-full px-3 py-2 border rounded-lg" value="Test Barber">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+            <input type="email" id="testEmail" class="w-full px-3 py-2 border rounded-lg" value="">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Teléfono:</label>
+            <input type="tel" id="testPhone" class="w-full px-3 py-2 border rounded-lg" value="3001234567">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Contraseña:</label>
+            <input type="password" id="testPassword" class="w-full px-3 py-2 border rounded-lg" value="barber123">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Especialidad:</label>
+            <input type="text" id="testSpecialty" class="w-full px-3 py-2 border rounded-lg" value="Corte de Cabello">
+        </div>
+        
+        <button onclick="testRegisterBarber()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+            Registrar Barbero de Prueba
+        </button>
+        
+        <div id="result" class="mt-4 p-4 rounded-lg"></div>
+    </div>
+
+    <script>
+        // Generar email único
+        document.getElementById('testEmail').value = `barber${Date.now()}@test.com`;
+        
+        async function testRegisterBarber() {
+            const name = document.getElementById('testName').value;
+            const email = document.getElementById('testEmail').value;
+            const phone = document.getElementById('testPhone').value;
+            const password = document.getElementById('testPassword').value;
+            const specialty = document.getElementById('testSpecialty').value;
+            
+            const token = localStorage.getItem('stylecut_token');
+            
+            console.log('Enviando datos:', { name, email, phone, specialty });
+            console.log('Token:', token ? 'exists' : 'missing');
+            
+            try {
+                const response = await fetch('/api/barbers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        password: password,
+                        specialty: specialty
+                    })
+                });
+                
+                const data = await response.json();
+                const resultDiv = document.getElementById('result');
+                
+                console.log('Response:', response.status, data);
+                
+                if (response.ok) {
+                    resultDiv.className = 'mt-4 p-4 rounded-lg bg-green-100 text-green-800';
+                    resultDiv.innerHTML = `✅ Barbero creado exitosamente: ${data.message}`;
+                } else {
+                    resultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-800';
+                    resultDiv.innerHTML = `❌ Error: ${data.error}`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').className = 'mt-4 p-4 rounded-lg bg-red-100 text-red-800';
+                document.getElementById('result').innerHTML = `❌ Error de conexión: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Roles - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-white text-center mb-8">Test de Roles - StyleCut Pro</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Admin Test -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Administrador</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="adminEmail" value="admin1@stylecut.com" 
+                               class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="adminPassword" value="admin123" 
+                               class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <button onclick="testLogin('admin')" 
+                            class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700">
+                        Test Admin Login
+                    </button>
+                    <div id="adminResult" class="mt-2 p-2 rounded text-sm hidden"></div>
+                </div>
+            </div>
+
+            <!-- Barber Test -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Barbero</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="barberEmail" value="carlos@stylecut.com" 
+                               class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="barberPassword" value="barber123" 
+                               class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <button onclick="testLogin('barber')" 
+                            class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+                        Test Barber Login
+                    </button>
+                    <div id="barberResult" class="mt-2 p-2 rounded text-sm hidden"></div>
+                </div>
+            </div>
+
+            <!-- Client Test -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Cliente</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="clientEmail" value="juan.perez@email.com" 
+                               class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="clientPassword" value="client123" 
+                               class="w-full p-2 border rounded" readonly>
+                    </div>
+                    <button onclick="testLogin('client')" 
+                            class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+                        Test Client Login
+                    </button>
+                    <div id="clientResult" class="mt-2 p-2 rounded text-sm hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Status -->
+        <div class="mt-8 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Estado del API</h2>
+            <div id="apiStatus" class="p-3 rounded text-sm"></div>
+        </div>
+
+        <!-- Console Log -->
+        <div class="mt-8 bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold text-white mb-4">Console Log</h2>
+            <div id="consoleLog" class="bg-gray-900 text-green-400 p-3 rounded font-mono text-sm h-32 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        // Console logging
+        function log(message) {
+            const consoleDiv = document.getElementById('consoleLog');
+            const timestamp = new Date().toLocaleTimeString();
+            consoleDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            console.log(message);
+        }
+
+        // Check API status
+        async function checkAPI() {
+            const statusDiv = document.getElementById('apiStatus');
+            try {
+                const response = await fetch('http://localhost:3001/api/health');
+                const data = await response.json();
+                statusDiv.innerHTML = `
+                    <div class="bg-green-100 text-green-800 p-3 rounded">
+                        <strong>API Status:</strong> OK<br>
+                        <strong>Database:</strong> ${data.database}<br>
+                        <strong>Uptime:</strong> ${Math.floor(data.uptime)}s
+                    </div>
+                `;
+                log('API conectada exitosamente');
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="bg-red-100 text-red-800 p-3 rounded">
+                        <strong>API Status:</strong> ERROR<br>
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+                log('Error de conexión con API: ' + error.message);
+            }
+        }
+
+        // Test login for specific role
+        async function testLogin(role) {
+            const resultDiv = document.getElementById(`${role}Result`);
+            const button = event.target;
+            
+            // Get credentials
+            let email, password;
+            switch(role) {
+                case 'admin':
+                    email = document.getElementById('adminEmail').value;
+                    password = document.getElementById('adminPassword').value;
+                    break;
+                case 'barber':
+                    email = document.getElementById('barberEmail').value;
+                    password = document.getElementById('barberPassword').value;
+                    break;
+                case 'client':
+                    email = document.getElementById('clientEmail').value;
+                    password = document.getElementById('clientPassword').value;
+                    break;
+            }
+            
+            // Show loading
+            button.textContent = 'Probando...';
+            button.disabled = true;
+            resultDiv.classList.add('hidden');
+            
+            log(`Iniciando test de login para ${role}: ${email}`);
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password }),
+                    mode: 'cors'
+                });
+                
+                log(`Response status: ${response.status}`);
+                
+                const data = await response.json();
+                log(`Response data: ${JSON.stringify(data, null, 2)}`);
+                
+                if (response.ok) {
+                    // Success
+                    resultDiv.innerHTML = `
+                        <div class="bg-green-100 text-green-800 p-3 rounded">
+                            <strong>¡Login Exitoso!</strong><br>
+                            Rol: ${data.user.role}<br>
+                            Nombre: ${data.user.name}<br>
+                            Email: ${data.user.email}<br>
+                            <button onclick="redirectUser('${data.user.role}')" 
+                                    class="mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm">
+                                Ir al Panel
+                            </button>
+                        </div>
+                    `;
+                    resultDiv.classList.remove('hidden');
+                    
+                    log(`Login exitoso para ${role}: ${data.user.name}`);
+                    
+                } else {
+                    // Error
+                    throw new Error(data.error || 'Error desconocido');
+                }
+                
+            } catch (error) {
+                log(`Error de login para ${role}: ${error.message}`);
+                
+                resultDiv.innerHTML = `
+                    <div class="bg-red-100 text-red-800 p-3 rounded">
+                        <strong>Error de Login</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+            }
+            
+            // Reset button
+            button.textContent = `Test ${role.charAt(0).toUpperCase() + role.slice(1)} Login`;
+            button.disabled = false;
+        }
+
+        // Redirect user to appropriate panel
+        function redirectUser(role) {
+            let url;
+            switch(role) {
+                case 'admin':
+                    url = 'admin-dashboard.html';
+                    break;
+                case 'barber':
+                    url = 'barber-dashboard.html';
+                    break;
+                case 'client':
+                    url = 'client-portal.html';
+                    break;
+            }
+            log(`Redirigiendo a ${url}`);
+            window.location.href = url;
+        }
+
+        // Initialize
+        checkAPI();
+        
+        // Check API every 5 seconds
+        setInterval(checkAPI, 5000);
+        
+        log('Página de test de roles cargada');
+    </script>
+</body>
+</html>

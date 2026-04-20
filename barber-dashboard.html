@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Barbero - StyleCut Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+    <script src="data-manager.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .appointment-card {
+            transition: all 0.3s ease;
+        }
+        
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <!-- Header -->
+    <header class="glass-effect shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-spa text-3xl text-purple-600"></i>
+                    <span class="text-2xl font-bold text-gray-800">StyleCut Pro</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700">
+                        <i class="fas fa-user-tie mr-2"></i>
+                        <span id="barberName">Carlos Rodríguez</span>
+                    </span>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Salir
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8 relative">
+        <!-- Watermark Background -->
+        <div id="watermarkBackground" class="fixed inset-0 pointer-events-none opacity-10 z-0 flex items-center justify-center">
+            <div class="transform rotate-12 scale-150">
+                <i class="fas fa-store text-gray-400 text-9xl"></i>
+            </div>
+        </div>
+        <!-- Welcome Section with Facebook-style Cover -->
+        <section class="text-center text-white mb-16 relative">
+            <!-- Cover Image Container -->
+            <div id="coverImageContainer" class="relative h-48 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg overflow-hidden mb-8">
+                <!-- Cover Upload Area -->
+                <div id="coverUploadArea" class="absolute inset-0 flex items-center justify-center cursor-pointer hover:bg-black hover:bg-opacity-20 transition">
+                    <div class="text-center">
+                        <i class="fas fa-image text-4xl text-white mb-2"></i>
+                        <p class="text-white text-sm">Subir Imagen de Portada</p>
+                    </div>
+                </div>
+                <input type="file" id="coverUpload" accept="image/*" class="hidden">
+                
+                <!-- Profile Picture Overlay -->
+                <div class="absolute bottom-0 left-8">
+                    <div id="barberLogoDisplay" class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl relative overflow-hidden border-4 border-white">
+                        <div id="logoUploadArea" class="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition rounded-full">
+                            <i class="fas fa-camera text-3xl text-gray-600"></i>
+                        </div>
+                        <input type="file" id="logoUploadMain" accept="image/*" class="hidden">
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- Notifications Container -->
+        <div id="notificationsContainer"></div>
+
+        
+        <!-- Stats Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-6 text-center">
+                <i class="fas fa-calendar-check text-3xl text-green-600 mb-3"></i>
+                <h3 class="text-2xl font-bold text-gray-800" id="todayAppointments">5</h3>
+                <p class="text-gray-600">Citas Hoy</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center">
+                <i class="fas fa-clock text-3xl text-blue-600 mb-3"></i>
+                <h3 class="text-2xl font-bold text-gray-800" id="weekAppointments">23</h3>
+                <p class="text-gray-600">Citas Semana</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center">
+                <i class="fas fa-dollar-sign text-3xl text-purple-600 mb-3"></i>
+                <h3 class="text-2xl font-bold text-gray-800" id="monthEarnings">$1.2M</h3>
+                <p class="text-gray-600">Ganancias Mes</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center">
+                <i class="fas fa-star text-3xl text-yellow-500 mb-3"></i>
+                <h3 class="text-2xl font-bold text-gray-800">4.8</h3>
+                <p class="text-gray-600">Calificación</p>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showScheduleModal()">
+                <i class="fas fa-calendar-plus text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Configurar Horario</h3>
+                <p class="text-gray-600">Define tu disponibilidad</p>
+            </div>
+            
+                        
+            <div class="hero-card glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showServicesModal()">
+                <i class="fas fa-cut text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Mis Servicios</h3>
+                <p class="text-gray-600">Gestiona tus servicios</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showProfileModal()">
+                <i class="fas fa-user-edit text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Mi Perfil</h3>
+                <p class="text-gray-600">Personaliza tu información</p>
+            </div>
+            
+            <div class="hero-card glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="showAppointmentHistoryModal()">
+                <i class="fas fa-history text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Historial de Citas</h3>
+                <p class="text-gray-600">Ver todas las citas completadas</p>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 text-center hover:scale-105 transition cursor-pointer" onclick="openReportModal()">
+                <i class="fas fa-chart-line text-4xl text-purple-600 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-800 mb-2">Reporte de Ganancias</h3>
+                <p class="text-gray-600">Ver ganancias semanales y exportar</p>
+            </div>
+        </section>
+
+        <!-- Today's Schedule -->
+        <section class="glass-effect rounded-xl p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Citas de Hoy</h2>
+                <div class="flex space-x-2">
+                    <button onclick="filterAppointments('all')" class="px-4 py-2 bg-purple-600 text-white rounded-lg">Todas</button>
+                    <button onclick="filterAppointments('pending')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Pendientes</button>
+                    <button onclick="filterAppointments('confirmed')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Confirmadas</button>
+                </div>
+            </div>
+            <div id="appointmentsList" class="space-y-4">
+                <!-- Appointments will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Calendar View -->
+        <section class="glass-effect rounded-xl p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Vista de Calendario</h2>
+            <div id="calendarView" class="grid grid-cols-7 gap-2">
+                <!-- Calendar will be generated here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Configurar Horario</h3>
+                <button onclick="closeScheduleModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <form id="scheduleForm" class="space-y-6">
+                <div>
+                    <label class="block text-lg font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-calendar-week mr-2"></i>Configura tu Horario Semanal
+                    </label>
+                    
+                    <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                        <!-- Monday -->
+                        <div class="day-schedule border-2 border-purple-200 rounded-xl p-4 hover:border-purple-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="day1" class="mr-3 w-5 h-5 text-purple-600" checked>
+                                    <span class="font-semibold text-gray-800">Lunes</span>
+                                </label>
+                                <span class="text-sm text-gray-600">Semana laboral</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-sun mr-1"></i>Apertura
+                                    </label>
+                                    <input type="time" name="start1" value="09:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-moon mr-1"></i>Cierre
+                                    </label>
+                                    <input type="time" name="end1" value="18:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-coffee mr-1"></i>Pausa (opcional)
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="time" name="breakStart1" value="13:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Inicio pausa">
+                                    <input type="time" name="breakEnd1" value="14:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Fin pausa">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tuesday -->
+                        <div class="day-schedule border-2 border-purple-200 rounded-xl p-4 hover:border-purple-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="day2" class="mr-3 w-5 h-5 text-purple-600" checked>
+                                    <span class="font-semibold text-gray-800">Martes</span>
+                                </label>
+                                <span class="text-sm text-gray-600">Semana laboral</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-sun mr-1"></i>Apertura
+                                    </label>
+                                    <input type="time" name="start2" value="09:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-moon mr-1"></i>Cierre
+                                    </label>
+                                    <input type="time" name="end2" value="18:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-coffee mr-1"></i>Pausa (opcional)
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="time" name="breakStart2" value="13:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Inicio pausa">
+                                    <input type="time" name="breakEnd2" value="14:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Fin pausa">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wednesday -->
+                        <div class="day-schedule border-2 border-purple-200 rounded-xl p-4 hover:border-purple-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="day3" class="mr-3 w-5 h-5 text-purple-600" checked>
+                                    <span class="font-semibold text-gray-800">Miércoles</span>
+                                </label>
+                                <span class="text-sm text-gray-600">Semana laboral</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-sun mr-1"></i>Apertura
+                                    </label>
+                                    <input type="time" name="start3" value="09:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-moon mr-1"></i>Cierre
+                                    </label>
+                                    <input type="time" name="end3" value="18:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-coffee mr-1"></i>Pausa (opcional)
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="time" name="breakStart3" value="13:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Inicio pausa">
+                                    <input type="time" name="breakEnd3" value="14:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Fin pausa">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thursday -->
+                        <div class="day-schedule border-2 border-purple-200 rounded-xl p-4 hover:border-purple-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="day4" class="mr-3 w-5 h-5 text-purple-600" checked>
+                                    <span class="font-semibold text-gray-800">Jueves</span>
+                                </label>
+                                <span class="text-sm text-gray-600">Semana laboral</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-sun mr-1"></i>Apertura
+                                    </label>
+                                    <input type="time" name="start4" value="09:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-moon mr-1"></i>Cierre
+                                    </label>
+                                    <input type="time" name="end4" value="18:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-coffee mr-1"></i>Pausa (opcional)
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="time" name="breakStart4" value="13:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Inicio pausa">
+                                    <input type="time" name="breakEnd4" value="14:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Fin pausa">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Friday -->
+                        <div class="day-schedule border-2 border-purple-200 rounded-xl p-4 hover:border-purple-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="day5" class="mr-3 w-5 h-5 text-purple-600" checked>
+                                    <span class="font-semibold text-gray-800">Viernes</span>
+                                </label>
+                                <span class="text-sm text-gray-600">Semana laboral</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-sun mr-1"></i>Apertura
+                                    </label>
+                                    <input type="time" name="start5" value="09:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-moon mr-1"></i>Cierre
+                                    </label>
+                                    <input type="time" name="end5" value="18:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-coffee mr-1"></i>Pausa (opcional)
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="time" name="breakStart5" value="13:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Inicio pausa">
+                                    <input type="time" name="breakEnd5" value="14:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Fin pausa">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Saturday -->
+                        <div class="day-schedule border-2 border-blue-200 rounded-xl p-4 hover:border-blue-400 transition-all">
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" name="day6" class="mr-3 w-5 h-5 text-blue-600" checked>
+                                    <span class="font-semibold text-gray-800">Sábado</span>
+                                </label>
+                                <span class="text-sm text-blue-600">Medio día</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-sun mr-1"></i>Apertura
+                                    </label>
+                                    <input type="time" name="start6" value="08:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        <i class="fas fa-moon mr-1"></i>Cierre
+                                    </label>
+                                    <input type="time" name="end6" value="15:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                    </div>
+                </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-4 pt-6 border-t">
+                        <button type="button" onclick="saveSchedule()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                            <i class="fas fa-save mr-2"></i>
+                            Guardar Horario
+                        </button>
+                        <button type="button" onclick="closeScheduleModal()" class="flex-1 bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Barber Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Mi Perfil de Barbería</h3>
+                    <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <form id="barberProfileForm" class="space-y-6">
+                    <!-- Logo Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Logo de la Barbería</label>
+                        <div class="flex items-center space-x-4">
+                            <div id="logoPreview" class="w-24 h-24 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+                                <i class="fas fa-store text-4xl text-gray-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <input type="file" id="barberLogo" accept="image/*" class="hidden">
+                                <button type="button" onclick="document.getElementById('barberLogo').click()" class="bg-purple-100 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+                                    <i class="fas fa-camera mr-2"></i>Subir Logo
+                                </button>
+                                <p class="text-xs text-gray-500 mt-1">Formatos: JPG, PNG, GIF (Máx. 5MB)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Barber Shop Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Barbería</label>
+                        <input type="text" id="barberShopName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Ej: La Barbería de Carlos">
+                    </div>
+                    
+                    <!-- Barber Name -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tu Nombre como Barbero</label>
+                        <input type="text" id="barberDisplayName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Ej: Carlos Rodríguez">
+                    </div>
+                    
+                    <!-- Location -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ubicación de la Barbería</label>
+                        <div class="space-y-3">
+                            <div class="flex space-x-2">
+                                <input type="text" id="barberAddress" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Dirección completa">
+                                <button type="button" onclick="getCurrentLocation()" class="bg-purple-100 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+                                    <i class="fas fa-location-arrow mr-2"></i>GPS
+                                </button>
+                            </div>
+                            <div id="locationStatus" class="text-sm text-gray-600">
+                                <!-- Location status will be displayed here -->
+                            </div>
+                            <div id="mapContainer" class="h-48 bg-gray-200 rounded-lg overflow-hidden hidden">
+                                <!-- Map will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                        <textarea id="barberDescription" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Describe tu barbería y servicios..."></textarea>
+                    </div>
+                    
+                    <!-- Website Customization -->
+                    <div class="border-t pt-6">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Personalización del Sitio Web</h4>
+                        
+                        <!-- Color Theme -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tema de Colores</label>
+                            <div class="flex space-x-2">
+                                <div class="flex items-center">
+                                    <input type="radio" name="colorTheme" value="purple" checked class="mr-2">
+                                    <span class="w-6 h-6 bg-purple-600 rounded"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" name="colorTheme" value="blue" class="mr-2">
+                                    <span class="w-6 h-6 bg-blue-600 rounded"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" name="colorTheme" value="green" class="mr-2">
+                                    <span class="w-6 h-6 bg-green-600 rounded"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" name="colorTheme" value="red" class="mr-2">
+                                    <span class="w-6 h-6 bg-red-600 rounded"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Hero Image -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Imagen Principal del Sitio</label>
+                            <div class="flex items-center space-x-4">
+                                <div id="heroImagePreview" class="w-32 h-20 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" id="heroImage" accept="image/*" class="hidden">
+                                    <button type="button" onclick="document.getElementById('heroImage').click()" class="bg-purple-100 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-200 transition">
+                                        <i class="fas fa-camera mr-2"></i>Subir Imagen
+                                    </button>
+                                    <p class="text-xs text-gray-500 mt-1">Imagen para la sección principal</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Gallery Images -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Galería de Imágenes</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                                <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                                <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                                <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    <i class="fas fa-plus text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Watermark Settings -->
+                        <div class="mb-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="enableWatermark" class="mr-2" checked>
+                                <span class="text-sm font-medium text-gray-700">Agregar marca de agua con logo en imágenes</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                        Guardar Perfil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Barber Management Modal -->
+    <div id="barberManagementModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Gestionar Barberos</h3>
+                    <button onclick="closeBarberManagementModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <button onclick="addNewBarber()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-user-plus mr-2"></i>Agregar Nuevo Barbero
+                    </button>
+                </div>
+                
+                <div id="barbersList" class="space-y-4">
+                    <!-- Barbers will be loaded here -->
+                    <div class="border rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-user-tie text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Carlos Rodríguez</h4>
+                                    <p class="text-sm text-gray-600">Barbero Principal</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-100 text-blue-600 px-3 py-1 rounded hover:bg-blue-200 transition">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 transition">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Appointment History Modal -->
+    <div id="appointmentHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Historial de Citas Completo</h3>
+                    <button onclick="closeAppointmentHistoryModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-4 flex space-x-2">
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg" id="historyFilter">
+                        <option value="all">Todas las citas</option>
+                        <option value="completed">Completadas</option>
+                        <option value="cancelled">Canceladas</option>
+                        <option value="pending">Pendientes</option>
+                    </select>
+                    <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg" id="historyDateFilter">
+                </div>
+                
+                <div id="appointmentHistoryList" class="space-y-4">
+                    <!-- Appointment history will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Services Modal -->
+    <div id="servicesModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Mis Servicios</h3>
+                    <button onclick="closeServicesModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <button onclick="addNewService()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                        <i class="fas fa-plus mr-2"></i>Agregar Servicio
+                    </button>
+                </div>
+                
+                <div id="servicesList" class="space-y-4">
+                    <!-- Services will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Personalizar Mi Perfil</h3>
+                    <button onclick="closeProfileModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                
+                <!-- Cover Image Upload Section -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-image mr-1"></i>Imagen de Portada (Cover)
+                    </label>
+                    <div class="flex items-start space-x-4">
+                        <div id="coverPreview" class="w-32 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                            <i class="fas fa-image text-gray-400 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="coverUploadModal" accept="image/*" class="hidden">
+                            <button type="button" onclick="document.getElementById('coverUploadModal').click()" 
+                                    class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-upload mr-2"></i>Seleccionar Imagen de Portada
+                            </button>
+                            <p class="text-sm text-gray-500 mt-1">Formatos: JPG, PNG, GIF (Máx. 2MB)</p>
+                            <p class="text-xs text-gray-400 mt-1">Esta imagen aparecerá como fondo de tu perfil</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo Upload Section -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user-circle mr-1"></i>Foto de Perfil
+                    </label>
+                    <div class="flex items-start space-x-4">
+                        <div id="logoPreview" class="w-32 h-20 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                            <i class="fas fa-user text-gray-400 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <input type="file" id="logoUpload" accept="image/*" class="hidden">
+                            <button type="button" onclick="document.getElementById('logoUpload').click()" 
+                                    class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                                <i class="fas fa-upload mr-2"></i>Seleccionar Foto de Perfil
+                            </button>
+                            <p class="text-sm text-gray-500 mt-1">Formatos: JPG, PNG, GIF (Máx. 2MB)</p>
+                            <p class="text-xs text-gray-400 mt-1">Tu foto de perfil circular</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Form -->
+                <form id="profileForm" class="space-y-4">
+                    <!-- Basic Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user mr-1"></i>Nombre Completo
+                            </label>
+                            <input type="text" id="profileName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Tu nombre">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-envelope mr-1"></i>Email
+                            </label>
+                            <input type="email" id="profileEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="tu@email.com">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-phone mr-1"></i>Teléfono
+                            </label>
+                            <input type="tel" id="profilePhone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="3001234567">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-briefcase mr-1"></i>Especialidad
+                            </label>
+                            <input type="text" id="profileSpecialty" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Ej: Cortes Modernos">
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-info-circle mr-1"></i>Biografía Profesional
+                        </label>
+                        <textarea id="profileBio" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Cuéntanos sobre tu experiencia y estilo..."></textarea>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-800">Redes Sociales</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fab fa-instagram mr-1"></i>Instagram
+                                </label>
+                                <input type="text" id="profileInstagram" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="@tuusuario">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fab fa-facebook mr-1"></i>Facebook
+                                </label>
+                                <input type="text" id="profileFacebook" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600" placeholder="Tu perfil">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Work Preferences -->
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-800">Preferencias de Trabajo</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-clock mr-1"></i>Horario Preferido
+                                </label>
+                                <select id="preferredSchedule" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                    <option value="morning">Mañana (6am - 12pm)</option>
+                                    <option value="afternoon">Tarde (12pm - 6pm)</option>
+                                    <option value="evening">Noche (6pm - 10pm)</option>
+                                    <option value="flexible">Flexible</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-calendar-check mr-1"></i>Días Preferidos
+                                </label>
+                                <select id="preferredDays" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600">
+                                    <option value="weekdays">Días de semana</option>
+                                    <option value="weekends">Fines de semana</option>
+                                    <option value="all">Todos los días</option>
+                                    <option value="flexible">Flexible</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="space-y-3">
+                        <h4 class="font-semibold text-gray-800">Configuración de Notificaciones</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="notifyAppointments" class="mr-3 w-4 h-4 text-purple-600" checked>
+                                <span class="text-sm text-gray-700">Notificaciones de nuevas citas</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="notifyReminders" class="mr-3 w-4 h-4 text-purple-600" checked>
+                                <span class="text-sm text-gray-700">Recordatorios de citas</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="notifyReviews" class="mr-3 w-4 h-4 text-purple-600">
+                                <span class="text-sm text-gray-700">Notificaciones de reseñas</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-4 pt-4">
+                        <button type="submit" class="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                            <i class="fas fa-save mr-2"></i>
+                            Guardar Cambios
+                        </button>
+                        <button type="button" onclick="closeProfileModal()" class="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="barber-dashboard.js"></script>
+</body>
+</html>
