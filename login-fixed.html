@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleCut Pro - Login Corregido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <div class="glass-effect rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <i class="fas fa-spa text-4xl text-purple-600"></i>
+                <span class="text-3xl font-bold text-gray-800">StyleCut Pro</span>
+            </div>
+            <p class="text-gray-600">Sistema de Reservas para Barberías</p>
+        </div>
+
+        <!-- Debug Info -->
+        <div class="mb-6 p-3 bg-blue-50 rounded-lg text-sm">
+            <div class="font-semibold text-blue-800 mb-2">Estado del Sistema:</div>
+            <div id="systemStatus">Verificando...</div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-envelope mr-2"></i>Email
+                </label>
+                <input type="email" id="email" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="tu@email.com">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-lock mr-2"></i>Contraseña
+                </label>
+                <input type="password" id="password" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Tu contraseña">
+            </div>
+
+            <button type="submit" id="submitBtn"
+                class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition duration-200 font-medium">
+                <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- Quick Login Buttons -->
+        <div class="mt-6 space-y-2">
+            <div class="text-sm font-semibold text-gray-700 mb-2">Acceso Rápido:</div>
+            <button onclick="quickLogin('admin1@stylecut.com', 'admin123')"
+                class="w-full bg-red-600 text-white py-2 px-3 rounded hover:bg-red-700 text-sm">
+                <i class="fas fa-user-shield mr-2"></i>Admin 1
+            </button>
+            <button onclick="quickLogin('admin2@stylecut.com', 'admin123')"
+                class="w-full bg-red-600 text-white py-2 px-3 rounded hover:bg-red-700 text-sm">
+                <i class="fas fa-user-shield mr-2"></i>Admin 2
+            </button>
+            <button onclick="quickLogin('carlos@stylecut.com', 'barber123')"
+                class="w-full bg-blue-600 text-white py-2 px-3 rounded hover:bg-blue-700 text-sm">
+                <i class="fas fa-cut mr-2"></i>Barbero Demo
+            </button>
+            <button onclick="quickLogin('juan.perez@email.com', 'client123')"
+                class="w-full bg-green-600 text-white py-2 px-3 rounded hover:bg-green-700 text-sm">
+                <i class="fas fa-user mr-2"></i>Cliente Demo
+            </button>
+        </div>
+
+        <!-- Debug Console -->
+        <div class="mt-6 p-3 bg-gray-50 rounded-lg text-xs">
+            <div class="font-semibold mb-2">Consola de Depuración:</div>
+            <div id="debugConsole" class="font-mono text-gray-600 max-h-32 overflow-y-auto"></div>
+        </div>
+
+        <!-- Register Link -->
+        <div class="mt-6 text-center">
+            <p class="text-gray-600">
+                ¿No tienes cuenta? 
+                <a href="barber-registration.html" class="text-purple-600 hover:text-purple-700 font-medium">
+                    Regístrate aquí
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de login corregido
+        let debugLog = [];
+        
+        function log(message) {
+            debugLog.push(new Date().toLocaleTimeString() + ': ' + message);
+            updateDebugConsole();
+            console.log(message);
+        }
+
+        function updateDebugConsole() {
+            const console = document.getElementById('debugConsole');
+            console.innerHTML = debugLog.slice(-5).join('<br>');
+        }
+
+        function updateSystemStatus() {
+            const status = document.getElementById('systemStatus');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            status.innerHTML = `
+                <div>Usuarios en sistema: ${users.length}</div>
+                <div>Admins: ${users.filter(u => u.role === 'admin').length}</div>
+                <div>Barberos: ${users.filter(u => u.role === 'barber').length}</div>
+                <div>Clientes: ${users.filter(u => u.role === 'client').length}</div>
+            `;
+        }
+
+        // Usuarios demo - versión corregida
+        const DEMO_USERS = [
+            { id: 'admin1', name: 'Admin Principal', email: 'admin1@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: 'admin2', name: 'Admin Secundario', email: 'admin2@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: 'admin3', name: 'Admin Tercero', email: 'admin3@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: 'barber1', name: 'Carlos Rodríguez', email: 'carlos@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: 'barber2', name: 'Juan Martínez', email: 'juan@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: 'barber3', name: 'Miguel Ángel', email: 'miguel@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: 'client1', name: 'Juan Pérez', email: 'juan.perez@email.com', password: 'client123', role: 'client' },
+            { id: 'client2', name: 'María García', email: 'maria.garcia@email.com', password: 'client123', role: 'client' }
+        ];
+
+        // Inicializar sistema
+        function initializeSystem() {
+            log('Inicializando sistema...');
+            
+            // Limpiar localStorage si hay problemas
+            const currentUsers = JSON.parse(localStorage.getItem('users') || '[]');
+            if (currentUsers.length === 0 || currentUsers.length > 50) {
+                log('Limpiando localStorage y reinicializando...');
+                localStorage.removeItem('users');
+                localStorage.removeItem('barbers');
+                localStorage.removeItem('appointments');
+                localStorage.removeItem('authToken');
+            }
+            
+            // Cargar usuarios demo
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            if (users.length === 0) {
+                log('No hay usuarios, cargando usuarios demo...');
+                localStorage.setItem('users', JSON.stringify(DEMO_USERS));
+                users = DEMO_USERS;
+                log(`Cargados ${users.length} usuarios demo`);
+            } else {
+                log(`Encontrados ${users.length} usuarios existentes`);
+            }
+            
+            // Verificar usuarios admin
+            const admins = users.filter(u => u.role === 'admin');
+            log(`Admins disponibles: ${admins.map(a => a.email).join(', ')}`);
+            
+            updateSystemStatus();
+            log('Sistema inicializado correctamente');
+        }
+
+        // Login function
+        function performLogin(email, password) {
+            log(`Intentando login: ${email}`);
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            log(`Usuarios en sistema: ${users.length}`);
+            
+            const user = users.find(u => {
+                const match = u.email === email && u.password === password;
+                if (match) {
+                    log(`Usuario encontrado: ${u.name} (${u.role})`);
+                }
+                return match;
+            });
+            
+            if (user) {
+                log('Login exitoso!');
+                
+                // Guardar sesión
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                sessionStorage.setItem('userRole', user.role);
+                sessionStorage.setItem('userEmail', user.email);
+                
+                // Generar token
+                const token = btoa(JSON.stringify({
+                    id: user.id,
+                    email: user.email,
+                    role: user.role,
+                    exp: Date.now() + (24 * 60 * 60 * 1000)
+                }));
+                
+                localStorage.setItem('authToken', token);
+                log('Sesión guardada correctamente');
+                
+                return { success: true, user };
+            } else {
+                log('Login fallido: credenciales inválidas');
+                return { success: false, error: 'Credenciales inválidas' };
+            }
+        }
+
+        // Quick login
+        function quickLogin(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            
+            const result = performLogin(email, password);
+            
+            if (result.success) {
+                redirectToDashboard(result.user.role);
+            } else {
+                alert('Error en login: ' + result.error);
+            }
+        }
+
+        // Redirect to dashboard
+        function redirectToDashboard(role) {
+            log(`Redirigiendo a dashboard de ${role}`);
+            
+            setTimeout(() => {
+                switch(role) {
+                    case 'admin':
+                        window.location.href = 'admin-dashboard.html';
+                        break;
+                    case 'barber':
+                        window.location.href = 'barber-dashboard.html';
+                        break;
+                    case 'client':
+                        window.location.href = 'client-portal.html';
+                        break;
+                    default:
+                        log('Rol no reconocido: ' + role);
+                        alert('Rol no reconocido: ' + role);
+                }
+            }, 1000);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Página cargada');
+            initializeSystem();
+            
+            const loginForm = document.getElementById('loginForm');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // Loading state
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Verificando...';
+                submitBtn.disabled = true;
+                
+                // Perform login
+                setTimeout(() => {
+                    const result = performLogin(email, password);
+                    
+                    if (result.success) {
+                        submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i>¡Login exitoso!';
+                        submitBtn.className = 'w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium';
+                        redirectToDashboard(result.user.role);
+                    } else {
+                        alert('Error de login: ' + result.error);
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
