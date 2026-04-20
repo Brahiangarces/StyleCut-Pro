@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
     <script src="data-manager.js"></script>
+    <script src="auth-system.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -247,27 +248,17 @@
                     try {
                         console.log('Attempting login with:', email);
                         
-                        // Direct API call with working configuration
-                        const response = await fetch('/api/auth/login', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ email, password }),
-                            mode: 'cors'
-                        });
+                        // Usar auth-system para login (compatible con GitHub Pages)
+                        const result = await authSystem.login(email, password);
                         
-                        console.log('Response status:', response.status);
-                        const data = await response.json();
-                        console.log('Response data:', data);
+                        console.log('Login result:', result);
                         
-                        if (response.ok) {
+                        if (result.success) {
                             // Store user session
-                            sessionStorage.setItem('userRole', data.user.role);
-                            sessionStorage.setItem('userEmail', data.user.email);
-                            sessionStorage.setItem('userData', JSON.stringify(data.user));
-                            localStorage.setItem('stylecut_token', data.token);
+                            sessionStorage.setItem('userRole', result.user.role);
+                            sessionStorage.setItem('userEmail', result.user.email);
+                            sessionStorage.setItem('userData', JSON.stringify(result.user));
+                            localStorage.setItem('stylecut_token', result.token);
                             
                             // Show success message
                             submitBtn.textContent = '¡Login exitoso!';
@@ -275,7 +266,7 @@
                             
                             // Redirect after a short delay
                             setTimeout(() => {
-                                switch(data.user.role) {
+                                switch(result.user.role) {
                                     case 'client':
                                         window.location.href = 'client-portal.html';
                                         break;
@@ -289,7 +280,7 @@
                             }, 1000);
                             
                         } else {
-                            throw new Error(data.error || 'Error desconocido');
+                            throw new Error(result.error || 'Error desconocido');
                         }
                         
                     } catch (error) {
@@ -334,17 +325,22 @@
                         submitBtn.textContent = 'Registrando...';
                         submitBtn.disabled = true;
                         
-                        // Create new user using real API
-                        const response = await DataManager.registerUser({
+                        // Create new user using auth-system (compatible con GitHub Pages)
+                        const result = await authSystem.register({
                             name: name,
                             email: email,
                             phone: phone,
                             password: password,
-                            confirmPassword: confirmPassword
+                            confirmPassword: confirmPassword,
+                            role: 'client'
                         });
                         
-                        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-                        switchTab('login');
+                        if (result.success) {
+                            alert('Registro exitoso. Ahora puedes iniciar sesión.');
+                            switchTab('login');
+                        } else {
+                            alert(`Error en registro: ${result.error}`);
+                        }
                         
                     } catch (error) {
                         console.error('Register error:', error);

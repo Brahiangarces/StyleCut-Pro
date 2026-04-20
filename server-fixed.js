@@ -381,6 +381,65 @@ app.post('/api/auth/register', async (req, res) => {
     }
 });
 
+// Register new barber
+app.post('/api/auth/register-barber', async (req, res) => {
+    try {
+        const { name, email, phone, password, confirmPassword, specialty, shopName } = req.body;
+
+        if (!name || !email || !phone || !password || !confirmPassword) {
+            return res.status(400).json({ error: 'Todos los campos son requeridos' });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ error: 'Las contraseñas no coinciden' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+        }
+
+        const existingUser = await getQuery('SELECT id FROM users WHERE email = ?', [email]);
+
+        if (existingUser) {
+            return res.status(400).json({ error: 'El email ya está registrado' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const result = await runQuery(
+            'INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)',
+            [name, email, phone, hashedPassword, 'barber']
+        );
+
+        // Add barber profile
+        await runQuery(
+            'INSERT INTO barbers (user_id, specialty, rating, earnings) VALUES (?, ?, ?, ?)',
+            [result.id, specialty || 'General', 0, 0]
+        );
+
+        const newUser = await getQuery(
+            'SELECT id, name, email, phone, role, status FROM users WHERE id = ?',
+            [result.id]
+        );
+        
+        const token = jwt.sign(
+            { id: newUser.id, email: newUser.email, role: newUser.role },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.status(201).json({
+            message: 'Registro de barbero exitoso',
+            token,
+            user: newUser
+        });
+
+    } catch (error) {
+        console.error('Register barber error:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
 // Get current user
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
     try {

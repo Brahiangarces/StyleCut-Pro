@@ -397,7 +397,7 @@ function updateNavigationButtons() {
 }
 
 // Handle form submission
-function handleSubmit(e) {
+async function handleSubmit(e) {
     e.preventDefault();
     console.log('Form submission started');
     
@@ -493,47 +493,43 @@ function savePendingRegistration(registration) {
     localStorage.setItem('barberhub_pending_registrations', JSON.stringify(pendingRegistrations));
 }
 
-// Register barber in backend
+// Register barber in backend (using localStorage for GitHub Pages)
 async function registerBarberInBackend(registration) {
     try {
-        const response = await fetch('/api/auth/register-barber', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: registration.basicInfo.shopName,
-                email: registration.basicInfo.email,
-                phone: registration.basicInfo.phone,
-                password: registration.basicInfo.password,
-                confirmPassword: registration.basicInfo.password,
-                specialty: registration.services.length > 0 ? registration.services[0].name : 'General',
-                shopName: registration.basicInfo.shopName
-            }),
-            mode: 'cors'
+        // Usar el nuevo sistema de autenticación con localStorage
+        const result = await authSystem.register({
+            name: registration.basicInfo.shopName,
+            email: registration.basicInfo.email,
+            phone: registration.basicInfo.phone,
+            password: registration.basicInfo.password,
+            confirmPassword: registration.basicInfo.password,
+            role: 'barber',
+            specialty: registration.services.length > 0 ? registration.services[0].name : 'General',
+            shopName: registration.basicInfo.shopName,
+            services: registration.services,
+            hours: registration.hours,
+            location: registration.location
         });
         
-        const data = await response.json();
-        
-        if (response.ok) {
+        if (result.success) {
             // Store token and user data
-            sessionStorage.setItem('authToken', data.token);
-            sessionStorage.setItem('userRole', data.user.role);
-            sessionStorage.setItem('userEmail', data.user.email);
-            sessionStorage.setItem('userData', JSON.stringify(data.user));
+            sessionStorage.setItem('authToken', result.token);
+            sessionStorage.setItem('userRole', result.user.role);
+            sessionStorage.setItem('userEmail', result.user.email);
+            sessionStorage.setItem('userData', JSON.stringify(result.user));
             
-            return { success: true, data };
+            return { success: true, data: result };
         } else {
-            return { success: false, error: data.error };
+            return { success: false, error: result.error };
         }
     } catch (error) {
         console.error('Error registering barber:', error);
-        return { success: false, error: 'Error de conexión con el servidor' };
+        return { success: false, error: 'Error en el registro' };
     }
 }
-    
-    // Add barber to directory
+
+// Add barber to directory (for compatibility with existing system)
+function addBarberToDirectory(registration) {
     const barberData = {
         id: Date.now(),
         name: registration.basicInfo.shopName, // Use shop name as barber name
