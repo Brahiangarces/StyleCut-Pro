@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow p-6">
+        <h1 class="text-2xl font-bold mb-4">Test Login Administrador</h1>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Email:</label>
+            <input type="email" id="email" value="admin1@stylecut.com" 
+                class="w-full border rounded px-3 py-2">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Contraseña:</label>
+            <input type="password" id="password" value="admin123" 
+                class="w-full border rounded px-3 py-2">
+        </div>
+        
+        <button onclick="testLogin()" 
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Probar Login
+        </button>
+        
+        <div id="result" class="mt-4 p-4 rounded"></div>
+        
+        <div class="mt-6 p-4 bg-gray-50 rounded">
+            <h3 class="font-bold mb-2">Usuarios Disponibles:</h3>
+            <div id="usersList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Usuarios demo
+        const demoUsers = [
+            { id: '1', name: 'Admin User', email: 'admin1@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: '2', name: 'Admin Two', email: 'admin2@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: '3', name: 'Admin Three', email: 'admin3@stylecut.com', password: 'admin123', role: 'admin' },
+            { id: '4', name: 'Carlos Rodríguez', email: 'carlos@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: '5', name: 'Juan Martínez', email: 'juan@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: '6', name: 'Miguel Ángel', email: 'miguel@stylecut.com', password: 'barber123', role: 'barber' },
+            { id: '7', name: 'Juan Pérez', email: 'juan.perez@email.com', password: 'client123', role: 'client' },
+            { id: '8', name: 'María García', email: 'maria.garcia@email.com', password: 'client123', role: 'client' }
+        ];
+
+        // Inicializar usuarios
+        function initUsers() {
+            localStorage.setItem('users', JSON.stringify(demoUsers));
+            console.log('Usuarios inicializados:', demoUsers.length);
+        }
+
+        // Mostrar usuarios
+        function showUsers() {
+            const usersList = document.getElementById('usersList');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            usersList.innerHTML = users.map(user => `
+                <div class="mb-2 p-2 border rounded">
+                    <strong>${user.name}</strong> (${user.role})<br>
+                    <small>${user.email} / ${user.password}</small>
+                </div>
+            `).join('');
+        }
+
+        // Test login
+        function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const result = document.getElementById('result');
+            
+            console.log('Intentando login con:', email, password);
+            
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            console.log('Usuarios en localStorage:', users);
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                result.innerHTML = `
+                    <div class="bg-green-100 text-green-800 p-3 rounded">
+                        <strong>¡Login Exitoso!</strong><br>
+                        Usuario: ${user.name}<br>
+                        Rol: ${user.role}<br>
+                        Email: ${user.email}<br>
+                        <button onclick="goToDashboard('${user.role}')" 
+                            class="mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            Ir al Dashboard
+                        </button>
+                    </div>
+                `;
+                
+                // Guardar sesión
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                sessionStorage.setItem('userRole', user.role);
+                sessionStorage.setItem('userEmail', user.email);
+                
+            } else {
+                result.innerHTML = `
+                    <div class="bg-red-100 text-red-800 p-3 rounded">
+                        <strong>Error: Credenciales inválidas</strong><br>
+                        Email: ${email}<br>
+                        Contraseña: ${password}<br>
+                        <small>Verifica que los datos coincidan exactamente</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Ir al dashboard
+        function goToDashboard(role) {
+            console.log('Redirigiendo a dashboard de:', role);
+            
+            switch(role) {
+                case 'admin':
+                    window.location.href = 'admin-dashboard.html';
+                    break;
+                case 'barber':
+                    window.location.href = 'barber-dashboard.html';
+                    break;
+                case 'client':
+                    window.location.href = 'client-portal.html';
+                    break;
+                default:
+                    alert('Rol no reconocido: ' + role);
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            initUsers();
+            showUsers();
+        });
+    </script>
+</body>
+</html>
